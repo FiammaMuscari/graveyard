@@ -187,7 +187,10 @@ export function GraveyardScene() {
         )}
 
         <a href="#fallen" className={`absolute left-1/2 z-40 flex h-12 w-[min(390px,68vw)] -translate-x-1/2 items-center justify-center gap-6 rounded-2xl border border-white/10 bg-white/10 text-sm font-black shadow-2xl shadow-black/40 backdrop-blur-md transition hover:bg-white/15 sm:h-14 sm:text-base ${selected ? "bottom-2 sm:bottom-6" : "bottom-4 sm:bottom-6"}`}>
-          View More Fallen Tickers <span aria-hidden="true" className="text-xl leading-none">⌄</span>
+          View More Fallen Tickers
+          <svg aria-hidden="true" className="h-5 w-5 shrink-0 translate-y-[1px]" viewBox="0 0 24 24" fill="none">
+            <path d="M7 10l5 5 5-5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </a>
 
         {ticker && loading && <div className="absolute inset-x-0 top-24 z-40 text-center text-sm font-black text-violet-100">Searching {ticker}...</div>}
