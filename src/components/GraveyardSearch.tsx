@@ -117,7 +117,7 @@ export function GraveyardSearch({ mode = "navigate" }: { mode?: "navigate" | "sc
   }, [clean, openTicker, results]);
 
   return (
-    <form onSubmit={onSubmit} className="search-shell relative flex h-10 min-w-0 items-center rounded-2xl border border-white/25 bg-white/10 px-3 shadow-2xl shadow-black/30 backdrop-blur-md sm:h-14 sm:w-72 sm:px-5">
+    <form onSubmit={onSubmit} className="search-shell relative flex h-10 min-w-0 items-center gap-2 rounded-2xl border border-white/25 bg-white/10 px-3 shadow-2xl shadow-black/30 backdrop-blur-md sm:h-14 sm:w-72 sm:gap-3 sm:px-5">
       <input
         aria-label="Search a ticker"
         value={query}
@@ -130,9 +130,9 @@ export function GraveyardSearch({ mode = "navigate" }: { mode?: "navigate" | "sc
         placeholder="Search a ticker"
         spellCheck={false}
         autoComplete="off"
-        className="w-28 bg-transparent text-sm font-black uppercase text-white outline-none placeholder:normal-case placeholder:text-white/75 sm:w-full sm:text-base"
+        className="min-w-0 flex-1 bg-transparent text-sm font-black uppercase text-white outline-none placeholder:normal-case placeholder:text-white/75 sm:text-base"
       />
-      <button type="submit" aria-label="Search" disabled={!clean || (!effectiveLoading && results.length === 0)} className="grid place-items-center disabled:opacity-40">
+      <button type="submit" aria-label="Search" disabled={!clean || (!effectiveLoading && results.length === 0)} className="grid shrink-0 place-items-center disabled:opacity-40">
         <svg className="h-4 w-4 shrink-0 text-white sm:h-5 sm:w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="m21 21-4.2-4.2m1.2-5.3a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         </svg>

@@ -28,7 +28,7 @@ export function ShareGrave({ report }: { report: GraveyardReport }) {
   return (
     <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-4">
       <div ref={ref} className="rounded-[2rem] bg-[#090716] p-8 text-white">
-        <p className="mb-5 text-center text-2xl font-black">Ticker Graveyard 🪦</p>
+        <p className="mb-5 text-center text-2xl font-black">Gravefy 🪦</p>
         <Tombstone report={report} large />
         <p className="mt-6 text-center text-sm text-violet-200">Not financial advice. Just spooky math.</p>
       </div>

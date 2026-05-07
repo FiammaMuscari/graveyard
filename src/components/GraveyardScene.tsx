@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GraveyardSearch } from "@/components/GraveyardSearch";
@@ -35,15 +36,17 @@ type SceneGrave = {
 
 
 const fireflies = [
-  [12, 58, 9.2, -1.2, 18, -12], [18, 72, 12.5, -6.4, -14, 10], [25, 63, 10.8, -3.1, 22, 8],
-  [32, 78, 14.2, -8.7, -18, -14], [39, 57, 11.7, -2.5, 12, -20], [46, 70, 13.4, -9.9, 25, 4],
-  [53, 61, 9.8, -4.8, -16, 16], [61, 75, 15.6, -11.2, 19, -9], [68, 55, 12.9, -7.3, -22, -6],
-  [74, 69, 10.4, -1.8, 14, 18], [82, 60, 16.1, -12.1, -20, 12], [89, 74, 13.8, -5.5, 17, -16],
-  [8, 81, 15.2, -10.4, 24, -5], [29, 84, 12.1, -6.8, -12, -18], [57, 83, 10.6, -2.9, 16, 14],
-  [77, 82, 14.8, -9.1, -15, -10], [92, 52, 11.2, -4.3, -18, 20], [5, 66, 13.1, -7.8, 15, 13],
-  [14, 43, 10.9, -6.2, 11, -16], [21, 52, 16.4, -13.2, -21, 7], [36, 48, 12.8, -4.4, 18, 11],
-  [49, 53, 15.3, -10.8, -13, -15], [64, 47, 11.6, -2.7, 21, 9], [79, 49, 13.9, -8.4, -16, -18],
-  [87, 63, 17.2, -14.1, 12, 15], [43, 86, 14.6, -5.9, 26, -7], [70, 88, 12.3, -3.7, -24, 6],
+  [4, 30, 12.8, -1.2, 28, -18], [8, 52, 14.1, -4.6, -24, 22], [11, 82, 13.4, -2.8, 34, -12],
+  [16, 40, 15.2, -7.1, -30, -24], [20, 70, 12.2, -3.5, 26, 18], [24, 24, 13.8, -5.9, 38, -20],
+  [29, 88, 14.7, -1.7, -28, -22], [34, 34, 12.6, -6.4, 22, 30], [40, 76, 13.2, -2.2, -36, 16],
+  [47, 28, 14.3, -8.1, 32, -26], [54, 84, 12.4, -4.9, -20, 34], [61, 36, 13.9, -3.1, 30, 18],
+  [68, 72, 12.9, -6.8, -34, -18], [75, 26, 15.4, -2.6, 24, -30], [82, 58, 13.1, -7.7, 40, 12],
+  [90, 34, 14.6, -5.2, -30, 26], [96, 66, 12.3, -1.9, 22, -28], [6, 90, 13.7, -6.1, -38, -16],
+  [14, 20, 14.9, -4.1, 34, -24], [22, 58, 12.7, -8.4, -26, 20], [32, 18, 13.5, -2.4, 28, 30],
+  [44, 92, 15.1, -7.3, -34, -22], [56, 18, 12.5, -3.9, 24, -32], [70, 90, 13.6, -6.7, -28, 18],
+  [84, 22, 14.4, -2.1, -22, 28], [94, 86, 13.3, -9.2, 30, -26], [18, 86, 15.8, -5.6, -36, 14],
+  [38, 44, 12.1, -1.4, 22, -34], [64, 48, 14.2, -8.8, 30, 28], [88, 78, 13.0, -4.4, -32, -20],
+  [3, 64, 12.6, -2.9, 38, -16], [52, 64, 14.0, -7.9, -24, -30], [97, 46, 13.4, -5.0, 32, 22],
 ] satisfies Array<[number, number, number, number, number, number]>;
 
 const fallenItems = [
@@ -154,7 +157,7 @@ export function GraveyardScene() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#070918] text-white">
       <section id="top" className="cemetery-scene relative h-[100svh] w-full overflow-hidden">
-        <div className="moon-glow absolute left-[12%] top-[16%] h-[19%] w-[20%] rounded-full" />
+        <div className="moon-glow absolute left-[20%] top-[10%] h-[19%] w-[20%] rounded-full" />
         <div className="scene-vignette absolute inset-0" />
         <div className="fireflies" aria-hidden="true">
           {fireflies.map(([x, y, duration, delay, dx, dy], index) => (
@@ -174,8 +177,8 @@ export function GraveyardScene() {
 
         <header className="relative z-[70] flex items-center justify-between gap-4 px-4 pt-5 sm:px-8 sm:pt-7">
           <Link href="/" className="block" onClick={() => setSelected(null)}>
-            <span className="brand-title block text-xl font-black leading-tight drop-shadow sm:text-4xl">Ticker Graveyard</span>
-            <span className="mt-1 hidden text-sm font-semibold text-white/90 drop-shadow sm:block sm:text-lg">A cemetery for stocks that didn&apos;t make it.</span>
+            <span className="brand-title block text-xl font-black leading-tight drop-shadow sm:text-4xl">Gravefy</span>
+            <span className="mt-1 hidden text-sm font-semibold text-white/90 drop-shadow sm:block sm:text-lg">Where hype goes to rest</span>
           </Link>
           <GraveyardSearch mode="scene" />
         </header>
@@ -214,11 +217,14 @@ export function GraveyardScene() {
           </aside>
         )}
 
-        <a href="#fallen" className={`absolute left-1/2 z-40 flex h-12 w-[min(390px,68vw)] -translate-x-1/2 items-center justify-center gap-6 rounded-2xl border border-white/10 bg-white/10 text-sm font-black shadow-2xl shadow-black/40 backdrop-blur-md transition hover:bg-white/15 sm:h-14 sm:text-base ${selected ? "bottom-2 sm:bottom-6" : "bottom-4 sm:bottom-6"}`}>
-          View More Fallen Tickers
-          <svg aria-hidden="true" className="h-5 w-5 shrink-0 translate-y-[1px]" viewBox="0 0 24 24" fill="none">
-            <path d="M7 10l5 5 5-5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+        <a href="#fallen" className={`absolute left-1/2 z-40 flex h-12 w-[min(320px,82vw)] -translate-x-1/2 items-center justify-center rounded-2xl border border-white/10 bg-white/10 px-4 text-sm font-black shadow-2xl shadow-black/40 backdrop-blur-md transition hover:bg-white/15 sm:h-14 sm:w-[min(390px,68vw)] sm:px-6 sm:text-base ${selected ? "bottom-2 sm:bottom-6" : "bottom-4 sm:bottom-6"}`}>
+          <span className="inline-flex items-center justify-center gap-2 sm:gap-2.5">
+            <span className="sm:hidden">Summon More Tickers</span>
+            <span className="hidden sm:inline">Summon More Fallen Tickers</span>
+            <svg aria-hidden="true" className="h-5 w-5 shrink-0 translate-y-[1px]" viewBox="0 0 24 24" fill="none">
+              <path d="M7 10l5 5 5-5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
         </a>
 
         {ticker && loading && <div className="absolute inset-x-0 top-24 z-40 text-center text-sm font-black text-violet-100">Searching {ticker}...</div>}
@@ -227,19 +233,39 @@ export function GraveyardScene() {
       <section id="fallen" className="fallen-section relative flex min-h-[100svh] scroll-mt-0 flex-col overflow-hidden px-4 py-5 sm:px-8 sm:py-8">
         <div className="fallen-orb fallen-orb-a" />
         <div className="fallen-orb fallen-orb-b" />
-        <svg className="absolute left-4 top-8 h-24 w-24 text-violet-300/10 sm:left-10 sm:h-40 sm:w-40" viewBox="0 0 120 120" aria-hidden="true">
-          <path fill="currentColor" d="M57 7c17 0 31 14 31 31v49h10v18H22V87h10V38C32 21 46 7 57 7Zm0 12c-10 0-19 9-19 19v49h38V38c0-10-9-19-19-19Z" />
-        </svg>
-        <svg className="absolute bottom-20 right-4 h-28 w-28 rotate-12 text-emerald-200/10 sm:right-12 sm:h-44 sm:w-44" viewBox="0 0 120 120" aria-hidden="true">
-          <path fill="currentColor" d="M18 78c8-21 25-30 41-24 9-18 30-25 45-13-18 5-25 17-25 32 0 17-14 31-31 31-14 0-25-8-30-26Z" />
-        </svg>
+        <Image
+          src="/graveyard-assets/optimized/tombstone_04.webp"
+          alt=""
+          aria-hidden="true"
+          width={460}
+          height={481}
+          className="pointer-events-none absolute -left-3 top-28 h-24 w-20 rotate-[-8deg] object-contain opacity-[0.18] drop-shadow-[0_0_24px_rgba(139,92,246,.22)] sm:left-8 sm:top-32 sm:h-36 sm:w-32"
+        />
+        <Image
+          src="/graveyard-assets/not-found/ticker-ghost.webp"
+          alt=""
+          aria-hidden="true"
+          width={520}
+          height={520}
+          className="pointer-events-none absolute bottom-16 -right-10 h-36 w-36 rotate-12 object-contain opacity-[0.10] blur-[0.2px] drop-shadow-[0_0_34px_rgba(110,231,183,.16)] sm:right-0 sm:h-52 sm:w-52"
+        />
 
         <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col">
           <div className="flex flex-col gap-4 pb-4 pt-2 text-center sm:pb-6">
             <p className="text-xs font-black uppercase tracking-[.35em] text-violet-300/70">More fallen items</p>
             <h2 className="display-title text-3xl font-black sm:text-5xl">Twenty haunted tickers</h2>
             <p className="mx-auto max-w-2xl text-sm font-semibold text-violet-100/62 sm:text-base">
-              A lightweight watchlist preview. Tap any symbol to summon its tombstone with live Wallbit price data and Stooq ATH math.
+              A lightweight watchlist preview. Tap any symbol to summon its tombstone with live{" "}
+              <a
+                href="https://www.wallbit.io/es"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Visit Wallbit wallet website in a new tab"
+                className="rounded-sm font-black text-emerald-200 underline decoration-emerald-300/75 decoration-2 underline-offset-4 transition hover:text-emerald-100 hover:decoration-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/70"
+              >
+                Wallbit
+              </a>{" "}
+              price data and Stooq ATH math.
             </p>
           </div>
 

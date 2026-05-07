@@ -3,7 +3,7 @@ import "./globals.css";
 
 
 export const metadata: Metadata = {
-  title: "Ticker Graveyard — Rest in price",
+  title: "Rest in price",
   description: "A viral cemetery for stocks that fell from their all-time highs. Educational only, not financial advice.",
   openGraph: {
     title: "Ticker Graveyard",

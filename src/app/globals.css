@@ -3,6 +3,7 @@
 :root {
   --background: #070918;
   --foreground: #f8f7ff;
+  --cemetery-join: #02030a;
 }
 
 @theme inline {
@@ -24,11 +25,12 @@ body {
 
 .cemetery-scene {
   isolation: isolate;
+  z-index: 1;
 }
 .scene-vignette {
   pointer-events: none;
   background:
-    radial-gradient(circle at 19% 25%, rgba(255, 239, 210, .30), rgba(221, 200, 255, .17) 10%, transparent 23%),
+    radial-gradient(circle at 30% 19%, rgba(255, 239, 210, .28), rgba(221, 200, 255, .16) 9%, transparent 22%),
     linear-gradient(180deg, rgba(8, 8, 24, .02) 0%, rgba(5, 7, 18, .12) 58%, rgba(2, 3, 10, .46) 100%),
     radial-gradient(circle at 50% 48%, transparent 0 50%, rgba(0, 0, 0, .32) 100%);
 }
@@ -430,22 +432,33 @@ body {
   right: 0;
   bottom: -1px;
   z-index: 35;
-  height: 34svh;
+  height: 50svh;
   pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(7, 9, 24, 0) 0%,
-    rgba(7, 9, 24, .28) 34%,
-    rgba(7, 9, 24, .72) 72%,
-    #050610 100%
-  );
+  background:
+    linear-gradient(
+      180deg,
+      rgba(2, 3, 10, 0) 0%,
+      rgba(2, 3, 10, .18) 26%,
+      rgba(2, 3, 10, .72) 64%,
+      rgba(2, 3, 10, .96) 84%,
+      var(--cemetery-join) 100%
+    );
 }
 .fallen-section {
+  z-index: 0;
   margin-top: 0 !important;
   background:
-    radial-gradient(circle at 22% 8%, rgba(88, 62, 170, .16), transparent 28rem),
-    radial-gradient(circle at 80% 88%, rgba(76, 189, 144, .06), transparent 26rem),
-    linear-gradient(180deg, #050610 0%, #050610 18%, #060713 58%, #04050d 100%) !important;
+    linear-gradient(180deg, var(--cemetery-join) 0%, var(--cemetery-join) 20svh, rgba(2, 3, 10, 0) 36svh),
+    radial-gradient(ellipse at 50% 32svh, rgba(104, 74, 196, .16), transparent 32rem),
+    radial-gradient(circle at 22% 34svh, rgba(88, 62, 170, .10), transparent 28rem),
+    radial-gradient(circle at 80% 88%, rgba(76, 189, 144, .055), transparent 26rem),
+    linear-gradient(
+      180deg,
+      var(--cemetery-join) 0%,
+      var(--cemetery-join) 22%,
+      #070815 58%,
+      #04050d 100%
+    ) !important;
 }
 .fallen-section::after {
   content: "";
@@ -454,15 +467,16 @@ body {
   right: 0;
   top: -1px;
   z-index: 1;
-  height: 16svh;
+  height: 18svh;
   pointer-events: none;
-  background: linear-gradient(180deg, #050610 0%, rgba(5, 6, 16, .72) 45%, rgba(5, 6, 16, 0) 100%);
+  background:
+    linear-gradient(180deg, var(--cemetery-join) 0%, var(--cemetery-join) 44%, rgba(2, 3, 10, .34) 78%, rgba(2, 3, 10, 0) 100%);
 }
 .fallen-section > .relative { position: relative; z-index: 2; }
 
 @media (max-width: 640px) {
-  .cemetery-scene::before { height: 24svh; }
-  .fallen-section::after { height: 10svh; }
+  .cemetery-scene::before { height: 32svh; }
+  .fallen-section::after { height: 14svh; }
 }
 
 /* Tombstone number shadows should lift with white, not dark */
@@ -477,13 +491,16 @@ body {
 
 /* Performance: decorative background via CSS, not an LCP <img> */
 .cemetery-scene {
-  background-image: url('/graveyard-assets/optimized/graveyard_background.webp');
-  background-size: cover;
-  background-position: center;
+  background-color: var(--cemetery-join);
+  background-image:
+    linear-gradient(180deg, rgba(2, 3, 10, 0) 0%, rgba(2, 3, 10, .08) 48%, rgba(2, 3, 10, .66) 74%, rgba(2, 3, 10, .94) 90%, var(--cemetery-join) 100%),
+    url('/graveyard-assets/optimized/graveyard_background.webp');
+  background-size: cover, cover;
+  background-position: center, center;
   background-repeat: no-repeat;
 }
 @media (max-width: 640px) {
-  .cemetery-scene { background-position: 47% center; }
+  .cemetery-scene { background-position: center, 46% center; }
 }
 
 /* Typography refresh: local/system fonts for stable localhost rendering */
@@ -846,14 +863,14 @@ body { font-size: 16.5px; }
   box-shadow: 0 0 9px rgba(96, 205, 255, .7), 0 0 18px rgba(80, 117, 255, .18);
 }
 @keyframes organic-firefly {
-  0% { opacity: .08; transform: translate3d(-50%, -50%, 0) scale(.45); }
-  8% { opacity: .58; }
-  19% { opacity: .15; transform: translate3d(calc(-50% + var(--dx) * .24), calc(-50% + var(--dy) * .18), 0) scale(.75); }
-  33% { opacity: .72; }
-  47% { opacity: .22; transform: translate3d(calc(-50% + var(--dx) * -.32), calc(-50% + var(--dy) * .55), 0) scale(.55); }
-  63% { opacity: .48; }
-  79% { opacity: .12; transform: translate3d(calc(-50% + var(--dx) * .72), calc(-50% + var(--dy) * -.44), 0) scale(.9); }
-  100% { opacity: .36; transform: translate3d(calc(-50% + var(--dx)), calc(-50% + var(--dy)), 0) scale(.65); }
+  0% { opacity: .18; transform: translate3d(-50%, -50%, 0) scale(.58); }
+  7% { opacity: .82; }
+  18% { opacity: .30; transform: translate3d(calc(-50% + var(--dx) * .28), calc(-50% + var(--dy) * .22), 0) scale(.88); }
+  31% { opacity: .92; }
+  45% { opacity: .34; transform: translate3d(calc(-50% + var(--dx) * -.38), calc(-50% + var(--dy) * .62), 0) scale(.68); }
+  61% { opacity: .76; }
+  77% { opacity: .26; transform: translate3d(calc(-50% + var(--dx) * .78), calc(-50% + var(--dy) * -.50), 0) scale(1); }
+  100% { opacity: .54; transform: translate3d(calc(-50% + var(--dx)), calc(-50% + var(--dy)), 0) scale(.78); }
 }
 @media (prefers-reduced-motion: reduce) {
   .fireflies span { animation: none; opacity: .24; }
@@ -879,27 +896,205 @@ body { font-size: 16.5px; }
 /* Fireflies must sit above the hero fade overlay (z 35), but below UI (z 40/70) */
 .fireflies {
   z-index: 36 !important;
-  top: 12% !important;
-  bottom: 18% !important;
+  top: 8% !important;
+  bottom: 8% !important;
   height: auto !important;
   overflow: visible !important;
 }
 .fireflies span {
   width: 4px !important;
   height: 4px !important;
-  opacity: .7;
+  opacity: .82;
   background: #e9feff !important;
   box-shadow:
-    0 0 6px rgba(235, 254, 255, .95),
-    0 0 16px rgba(84, 195, 255, .72),
-    0 0 28px rgba(94, 115, 255, .32) !important;
+    0 0 7px rgba(235, 254, 255, .98),
+    0 0 18px rgba(84, 195, 255, .82),
+    0 0 34px rgba(94, 115, 255, .42) !important;
 }
 .fireflies span:nth-child(3n) { width: 3px !important; height: 3px !important; }
 .fireflies span:nth-child(4n) { width: 5px !important; height: 5px !important; }
+.fireflies span:nth-child(6n) { width: 6px !important; height: 6px !important; opacity: .72; }
 
 /* More visible fireflies, still capped on mobile */
-.fireflies span:nth-child(5n) { width: 2px !important; height: 2px !important; opacity: .48; }
+.fireflies span:nth-child(5n) { width: 2px !important; height: 2px !important; opacity: .60; }
 .fireflies span:nth-child(7n) { background: #bfefff !important; }
 @media (max-width: 640px) {
-  .fireflies span:nth-child(n + 17) { display: none; }
+  .fireflies span:nth-child(n + 25) { display: none; }
+}
+
+/* Final mobile hero composition: tighter CTA + cleaner grave placement */
+@media (max-width: 640px) {
+  .asset-grave:not(.grave-selected) {
+    max-width: none !important;
+  }
+
+  .grave-hero {
+    top: 26.5% !important;
+    width: 33% !important;
+  }
+  .asset-grave:nth-child(1) { left: -4% !important; }
+  .asset-grave:nth-child(2) { left: 33.5% !important; }
+  .asset-grave:nth-child(3) { left: 70% !important; }
+
+  .front-grave {
+    bottom: 20.5% !important;
+    width: 23% !important;
+    transform: scale(1) !important;
+  }
+  .asset-grave:nth-child(4) { left: 0% !important; bottom: 21.5% !important; }
+  .asset-grave:nth-child(5) { left: 25.5% !important; bottom: 20.5% !important; }
+  .asset-grave:nth-child(6) { left: 51% !important; bottom: 20.75% !important; }
+  .asset-grave:nth-child(7) { left: 76% !important; bottom: 21.5% !important; }
+
+  .asset-grave:not(.grave-selected) .grave-copy {
+    top: 31% !important;
+    inset-inline: 20% !important;
+  }
+  .front-grave .grave-copy { top: 31.5% !important; }
+  .front-grave .grave-title { font-size: clamp(.56rem, 2.45vw, .74rem) !important; }
+  .front-grave .drop { font-size: clamp(.5rem, 2.2vw, .68rem) !important; }
+
+  .hood-grave .grave-copy {
+    inset-inline: 24% !important;
+    transform: translateX(0) rotate(-1deg) !important;
+  }
+  .hand {
+    bottom: 20% !important;
+    right: -3% !important;
+    height: 7rem !important;
+    width: 6rem !important;
+  }
+}
+
+/* Smooth firefly loop: no visible snap when each cycle repeats */
+.fireflies span {
+  animation-timing-function: linear !important;
+}
+@keyframes organic-firefly {
+  0% {
+    opacity: .42;
+    transform: translate3d(calc(-50% + var(--dx) * .22), calc(-50% + var(--dy) * -.18), 0) scale(.72);
+  }
+  12% {
+    opacity: .74;
+    transform: translate3d(calc(-50% + var(--dx) * .48), calc(-50% + var(--dy) * .12), 0) scale(.92);
+  }
+  27% {
+    opacity: .36;
+    transform: translate3d(calc(-50% + var(--dx) * .20), calc(-50% + var(--dy) * .54), 0) scale(.66);
+  }
+  43% {
+    opacity: .86;
+    transform: translate3d(calc(-50% + var(--dx) * -.36), calc(-50% + var(--dy) * .42), 0) scale(.98);
+  }
+  61% {
+    opacity: .44;
+    transform: translate3d(calc(-50% + var(--dx) * -.58), calc(-50% + var(--dy) * -.16), 0) scale(.76);
+  }
+  78% {
+    opacity: .82;
+    transform: translate3d(calc(-50% + var(--dx) * -.12), calc(-50% + var(--dy) * -.48), 0) scale(.90);
+  }
+  100% {
+    opacity: .42;
+    transform: translate3d(calc(-50% + var(--dx) * .22), calc(-50% + var(--dy) * -.18), 0) scale(.72);
+  }
+}
+
+/* Calmer, dispersed fireflies with real disappear phases */
+.fireflies span {
+  opacity: .46 !important;
+  animation-timing-function: ease-in-out !important;
+}
+.fireflies span:nth-child(6n) { opacity: .40 !important; }
+.fireflies span:nth-child(5n) { opacity: .32 !important; }
+@keyframes organic-firefly {
+  0% {
+    opacity: 0;
+    transform: translate3d(calc(-50% + var(--dx) * .22), calc(-50% + var(--dy) * -.18), 0) scale(.55);
+  }
+  10% { opacity: .52; }
+  20% {
+    opacity: .08;
+    transform: translate3d(calc(-50% + var(--dx) * .48), calc(-50% + var(--dy) * .12), 0) scale(.82);
+  }
+  34% { opacity: .66; }
+  48% {
+    opacity: 0;
+    transform: translate3d(calc(-50% + var(--dx) * -.36), calc(-50% + var(--dy) * .42), 0) scale(.62);
+  }
+  62% { opacity: .44; }
+  76% {
+    opacity: .06;
+    transform: translate3d(calc(-50% + var(--dx) * -.58), calc(-50% + var(--dy) * -.16), 0) scale(.74);
+  }
+  90% { opacity: .58; }
+  100% {
+    opacity: 0;
+    transform: translate3d(calc(-50% + var(--dx) * .22), calc(-50% + var(--dy) * -.18), 0) scale(.55);
+  }
+}
+@media (max-width: 640px) {
+  .fireflies span:nth-child(n + 19) { display: none; }
+}
+
+/* Mobile: show default graves as a clean 2-column x 3-row grid */
+@media (max-width: 640px) {
+  .cemetery-scene .asset-grave:not(.grave-selected) {
+    width: 29% !important;
+    max-width: none !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+  }
+
+  .cemetery-scene .asset-grave:nth-child(1) { left: 12% !important; top: 19% !important; }
+  .cemetery-scene .asset-grave:nth-child(2) { left: 59% !important; top: 19% !important; }
+  .cemetery-scene .asset-grave:nth-child(3) { left: 12% !important; top: 39% !important; }
+  .cemetery-scene .asset-grave:nth-child(4) { left: 59% !important; top: 39% !important; }
+  .cemetery-scene .asset-grave:nth-child(5) { left: 12% !important; top: 59% !important; }
+  .cemetery-scene .asset-grave:nth-child(6) { left: 59% !important; top: 59% !important; }
+  .cemetery-scene .asset-grave:nth-child(7) { display: none !important; }
+
+  .cemetery-scene .hand { display: none !important; }
+
+  .cemetery-scene .asset-grave:not(.grave-selected) .grave-copy {
+    top: 31% !important;
+    inset-inline: 20% !important;
+  }
+  .cemetery-scene .asset-grave:not(.grave-selected) .grave-title {
+    font-size: clamp(.62rem, 2.9vw, .84rem) !important;
+  }
+  .cemetery-scene .asset-grave:not(.grave-selected) .years {
+    font-size: clamp(.32rem, 1.45vw, .5rem) !important;
+    margin-top: 6% !important;
+  }
+  .cemetery-scene .asset-grave:not(.grave-selected) .drop {
+    font-size: clamp(.56rem, 2.55vw, .76rem) !important;
+    margin-top: 5% !important;
+  }
+  .cemetery-scene .asset-grave:not(.grave-selected) .ticker {
+    font-size: clamp(.34rem, 1.55vw, .52rem) !important;
+  }
+}
+
+/* Mobile search: give the input real writable space */
+@media (max-width: 640px) {
+  header { gap: .75rem !important; }
+  header .brand-title {
+    font-size: clamp(1rem, 5vw, 1.3rem) !important;
+    max-width: 7.8rem;
+  }
+  .search-shell {
+    width: min(13.75rem, 61vw) !important;
+    flex: 0 1 min(13.75rem, 61vw) !important;
+    padding-inline: .7rem !important;
+  }
+  .search-shell input {
+    width: auto !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    font-size: .86rem !important;
+  }
+  .search-shell input::placeholder { font-size: .82rem; }
 }
