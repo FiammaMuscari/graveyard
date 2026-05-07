@@ -3,7 +3,7 @@
 import { Download, Link as LinkIcon } from "lucide-react";
 import { toPng } from "html-to-image";
 import { useRef, useState } from "react";
-import { GraveyardReport } from "@/lib/graveyard";
+import type { GraveyardReport } from "@/lib/graveyard";
 import { Tombstone } from "./Tombstone";
 
 export function ShareGrave({ report }: { report: GraveyardReport }) {

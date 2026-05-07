@@ -59,6 +59,7 @@ export function jsonError(message: string, status: number, extraHeaders?: Header
       headers: {
         "Cache-Control": "no-store",
         "X-Content-Type-Options": "nosniff",
+        "X-Robots-Tag": "noindex, nofollow",
         ...extraHeaders,
       },
     },
@@ -69,5 +70,6 @@ export function safeJson<T>(data: T, init?: ResponseInit) {
   const response = NextResponse.json(data, init);
   response.headers.set("Cache-Control", init?.headers instanceof Headers ? init.headers.get("Cache-Control") ?? "private, max-age=30" : "private, max-age=30");
   response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("X-Robots-Tag", "noindex, nofollow");
   return response;
 }

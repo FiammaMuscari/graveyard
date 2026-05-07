@@ -131,11 +131,7 @@ export async function searchLiveReports(search: string, limit = 10) {
     item.symbol.toLowerCase().includes(normalized) || item.name.toLowerCase().includes(normalized)
   );
 
-  if (localMatches.length >= Math.min(5, limit)) return localMatches.slice(0, limit);
-
   const assets = await searchWallbitAssets(search, limit);
-  if (!assets.length) return localMatches.slice(0, limit);
-
   const liveMatches = assets.map((asset) => {
     const fallback = getMockReport(asset.symbol);
     return calculateReport(wallbitAssetToTicker(asset, fallback ?? undefined));

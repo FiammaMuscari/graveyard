@@ -33,6 +33,7 @@ type SceneGrave = {
   report?: SceneReport;
 };
 
+const WALLBIT_ASSETS_API_DOCS = "https://developer.wallbit.io/docs/api-reference/assets/list";
 
 
 const fireflies = [
@@ -213,11 +214,22 @@ export function GraveyardScene() {
               <Metric label="Damage" value={formatPercent(selected.drawdown)} tone={selected.drawdown < -15 ? "danger" : "good"} />
               <Metric label="Recovery" value={`+${selected.recoveryNeeded.toFixed(1)}%`} tone={selected.recoveryNeeded > 50 ? "warning" : "good"} />
             </div>
-            <p className="mt-2 text-xs font-semibold text-violet-100/75 sm:mt-3 sm:text-sm">{selected.type} · {selected.sector} · Wallbit price + Stooq ATH.</p>
+            <p className="mt-2 text-xs font-semibold text-violet-100/75 sm:mt-3 sm:text-sm">
+              {selected.type} · {selected.sector} ·{" "}
+              <a
+                href={WALLBIT_ASSETS_API_DOCS}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-black text-emerald-200 underline decoration-emerald-300/70 underline-offset-4 hover:text-emerald-100"
+              >
+                Wallbit API
+              </a>{" "}
+              price + Stooq ATH.
+            </p>
           </aside>
         )}
 
-        <a href="#fallen" className={`absolute left-1/2 z-40 flex h-12 w-[min(320px,82vw)] -translate-x-1/2 items-center justify-center rounded-2xl border border-white/10 bg-white/10 px-4 text-sm font-black shadow-2xl shadow-black/40 backdrop-blur-md transition hover:bg-white/15 sm:h-14 sm:w-[min(390px,68vw)] sm:px-6 sm:text-base ${selected ? "bottom-2 sm:bottom-6" : "bottom-4 sm:bottom-6"}`}>
+        <a href="#fallen" className={`summon-cta ${selected ? "summon-cta-selected" : ""} absolute left-1/2 z-40 flex h-12 w-[min(320px,82vw)] -translate-x-1/2 items-center justify-center rounded-2xl border border-white/10 bg-white/10 px-4 text-sm font-black shadow-2xl shadow-black/40 backdrop-blur-md transition hover:bg-white/15 sm:h-14 sm:w-[min(390px,68vw)] sm:px-6 sm:text-base ${selected ? "bottom-2 sm:bottom-6" : "bottom-4 sm:bottom-6"}`}>
           <span className="inline-flex items-center justify-center gap-2 sm:gap-2.5">
             <span className="sm:hidden">Summon More Tickers</span>
             <span className="hidden sm:inline">Summon More Fallen Tickers</span>
@@ -257,13 +269,13 @@ export function GraveyardScene() {
             <p className="mx-auto max-w-2xl text-sm font-semibold text-violet-100/62 sm:text-base">
               A lightweight watchlist preview. Tap any symbol to summon its tombstone with live{" "}
               <a
-                href="https://www.wallbit.io/es"
+                href={WALLBIT_ASSETS_API_DOCS}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Visit Wallbit wallet website in a new tab"
+                aria-label="Open Wallbit Assets API documentation in a new tab"
                 className="rounded-sm font-black text-emerald-200 underline decoration-emerald-300/75 decoration-2 underline-offset-4 transition hover:text-emerald-100 hover:decoration-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/70"
               >
-                Wallbit
+                Wallbit API
               </a>{" "}
               price data and Stooq ATH math.
             </p>

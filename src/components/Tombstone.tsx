@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GraveyardReport } from "@/lib/graveyard";
+import type { GraveyardReport } from "@/lib/graveyard";
 import { formatMoney, formatPercent } from "@/lib/utils";
 
 export function Tombstone({ report, large = false }: { report: GraveyardReport; large?: boolean }) {
