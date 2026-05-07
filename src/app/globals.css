@@ -708,3 +708,209 @@ body { font-size: 16.5px; }
   .hood-grave .grave-copy { inset-inline: 25% !important; transform: translateX(1px) rotate(-1deg) !important; }
   .hood-grave .grave-title { font-size: clamp(.5rem, 2.2vw, .68rem) !important; }
 }
+
+/* Firefly-like intermittent glow for the magical dots */
+.cemetery-scene .magic-sparkles {
+  animation: firefly-twinkle 4.8s ease-in-out infinite alternate, firefly-drift 14s ease-in-out infinite alternate;
+  will-change: opacity, transform, filter;
+}
+@keyframes firefly-twinkle {
+  0% { opacity: .22; filter: blur(.2px) brightness(.85); }
+  18% { opacity: .52; filter: blur(.1px) brightness(1.25); }
+  34% { opacity: .28; filter: blur(.2px) brightness(.9); }
+  57% { opacity: .62; filter: blur(.05px) brightness(1.45); }
+  76% { opacity: .34; filter: blur(.18px) brightness(1); }
+  100% { opacity: .55; filter: blur(.08px) brightness(1.3); }
+}
+@keyframes firefly-drift {
+  0% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(8px, -5px, 0); }
+  100% { transform: translate3d(-6px, 4px, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cemetery-scene .magic-sparkles { animation: none; }
+}
+
+/* More organic fireflies: desynced, light, transform/opacity only */
+.cemetery-scene .magic-sparkles {
+  filter: none !important;
+  will-change: transform, opacity;
+  contain: paint;
+}
+.magic-sparkles-a {
+  animation: firefly-a 8.7s cubic-bezier(.45,0,.55,1) infinite alternate !important;
+}
+.magic-sparkles-b {
+  opacity: .3;
+  background-size: 260px 210px, 310px 250px, 280px 220px, 340px 270px !important;
+  transform: translate3d(17px, 9px, 0);
+  animation: firefly-b 11.4s cubic-bezier(.4,0,.2,1) infinite alternate-reverse !important;
+  animation-delay: -3.2s !important;
+}
+.magic-sparkles-c {
+  opacity: .18;
+  background-size: 340px 260px, 390px 300px, 320px 250px, 430px 330px !important;
+  transform: translate3d(-23px, 18px, 0);
+  animation: firefly-c 13.6s cubic-bezier(.37,0,.63,1) infinite alternate !important;
+  animation-delay: -7.1s !important;
+}
+@keyframes firefly-a {
+  0% { opacity: .05; transform: translate3d(0, 0, 0); }
+  9% { opacity: .42; }
+  23% { opacity: .12; transform: translate3d(9px, -7px, 0); }
+  41% { opacity: .55; }
+  58% { opacity: .08; transform: translate3d(-5px, -14px, 0); }
+  73% { opacity: .36; }
+  100% { opacity: .18; transform: translate3d(12px, 5px, 0); }
+}
+@keyframes firefly-b {
+  0% { opacity: .28; transform: translate3d(17px, 9px, 0); }
+  14% { opacity: .04; }
+  31% { opacity: .48; transform: translate3d(2px, -5px, 0); }
+  49% { opacity: .10; }
+  67% { opacity: .39; transform: translate3d(26px, -12px, 0); }
+  84% { opacity: .02; }
+  100% { opacity: .32; transform: translate3d(10px, 14px, 0); }
+}
+@keyframes firefly-c {
+  0% { opacity: .02; transform: translate3d(-23px, 18px, 0); }
+  19% { opacity: .34; }
+  28% { opacity: .06; transform: translate3d(-10px, 4px, 0); }
+  52% { opacity: .26; }
+  61% { opacity: .03; }
+  79% { opacity: .44; transform: translate3d(-30px, -8px, 0); }
+  100% { opacity: .07; transform: translate3d(-14px, 12px, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .magic-sparkles-a,
+  .magic-sparkles-b,
+  .magic-sparkles-c { animation: none !important; }
+}
+
+/* Desync fireflies so they never all turn off together */
+.magic-sparkles-a { animation-duration: 9.3s !important; animation-delay: -1.1s !important; }
+.magic-sparkles-b { animation-duration: 12.7s !important; animation-delay: -5.4s !important; }
+.magic-sparkles-c { animation-duration: 15.1s !important; animation-delay: -9.2s !important; }
+@keyframes firefly-a {
+  0% { opacity: .18; transform: translate3d(0, 0, 0); }
+  11% { opacity: .48; }
+  24% { opacity: .16; transform: translate3d(8px, -6px, 0); }
+  39% { opacity: .62; }
+  57% { opacity: .22; transform: translate3d(-4px, -13px, 0); }
+  81% { opacity: .44; }
+  100% { opacity: .26; transform: translate3d(12px, 5px, 0); }
+}
+@keyframes firefly-b {
+  0% { opacity: .36; transform: translate3d(17px, 9px, 0); }
+  13% { opacity: .14; }
+  29% { opacity: .52; transform: translate3d(2px, -5px, 0); }
+  48% { opacity: .20; }
+  66% { opacity: .45; transform: translate3d(26px, -12px, 0); }
+  86% { opacity: .12; }
+  100% { opacity: .38; transform: translate3d(10px, 14px, 0); }
+}
+@keyframes firefly-c {
+  0% { opacity: .12; transform: translate3d(-23px, 18px, 0); }
+  17% { opacity: .40; }
+  33% { opacity: .18; transform: translate3d(-10px, 4px, 0); }
+  51% { opacity: .33; }
+  68% { opacity: .14; }
+  83% { opacity: .50; transform: translate3d(-30px, -8px, 0); }
+  100% { opacity: .16; transform: translate3d(-14px, 12px, 0); }
+}
+
+/* Organic scattered fireflies: individual particles, not tiled dots */
+.magic-sparkles { display: none !important; }
+.fireflies {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+  contain: paint;
+}
+.fireflies span {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: #bff4ff;
+  box-shadow: 0 0 7px rgba(128, 222, 255, .75), 0 0 14px rgba(84, 150, 255, .25);
+  opacity: .18;
+  transform: translate3d(-50%, -50%, 0) scale(.7);
+  animation: organic-firefly var(--dur) ease-in-out infinite;
+  animation-delay: var(--delay);
+  will-change: transform, opacity;
+}
+.fireflies span:nth-child(3n) {
+  width: 2px;
+  height: 2px;
+  background: #d7fbff;
+  box-shadow: 0 0 5px rgba(180, 245, 255, .7), 0 0 12px rgba(107, 92, 255, .22);
+}
+.fireflies span:nth-child(4n) {
+  width: 4px;
+  height: 4px;
+  background: #9ee7ff;
+  box-shadow: 0 0 9px rgba(96, 205, 255, .7), 0 0 18px rgba(80, 117, 255, .18);
+}
+@keyframes organic-firefly {
+  0% { opacity: .08; transform: translate3d(-50%, -50%, 0) scale(.45); }
+  8% { opacity: .58; }
+  19% { opacity: .15; transform: translate3d(calc(-50% + var(--dx) * .24), calc(-50% + var(--dy) * .18), 0) scale(.75); }
+  33% { opacity: .72; }
+  47% { opacity: .22; transform: translate3d(calc(-50% + var(--dx) * -.32), calc(-50% + var(--dy) * .55), 0) scale(.55); }
+  63% { opacity: .48; }
+  79% { opacity: .12; transform: translate3d(calc(-50% + var(--dx) * .72), calc(-50% + var(--dy) * -.44), 0) scale(.9); }
+  100% { opacity: .36; transform: translate3d(calc(-50% + var(--dx)), calc(-50% + var(--dy)), 0) scale(.65); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fireflies span { animation: none; opacity: .24; }
+}
+@media (max-width: 640px) {
+  .fireflies span:nth-child(n + 13) { display: none; }
+}
+
+/* Ensure organic fireflies are visible over vignette but under graves/UI */
+.fireflies {
+  z-index: 18 !important;
+  opacity: 1 !important;
+}
+.fireflies span {
+  background: #d8fbff !important;
+  opacity: .55;
+  box-shadow:
+    0 0 5px rgba(220, 252, 255, .95),
+    0 0 13px rgba(87, 191, 255, .68),
+    0 0 24px rgba(76, 96, 255, .28) !important;
+}
+
+/* Fireflies must sit above the hero fade overlay (z 35), but below UI (z 40/70) */
+.fireflies {
+  z-index: 36 !important;
+  top: 12% !important;
+  bottom: 18% !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+.fireflies span {
+  width: 4px !important;
+  height: 4px !important;
+  opacity: .7;
+  background: #e9feff !important;
+  box-shadow:
+    0 0 6px rgba(235, 254, 255, .95),
+    0 0 16px rgba(84, 195, 255, .72),
+    0 0 28px rgba(94, 115, 255, .32) !important;
+}
+.fireflies span:nth-child(3n) { width: 3px !important; height: 3px !important; }
+.fireflies span:nth-child(4n) { width: 5px !important; height: 5px !important; }
+
+/* More visible fireflies, still capped on mobile */
+.fireflies span:nth-child(5n) { width: 2px !important; height: 2px !important; opacity: .48; }
+.fireflies span:nth-child(7n) { background: #bfefff !important; }
+@media (max-width: 640px) {
+  .fireflies span:nth-child(n + 17) { display: none; }
+}

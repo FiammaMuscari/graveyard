@@ -33,6 +33,19 @@ type SceneGrave = {
 };
 
 
+
+const fireflies = [
+  [12, 58, 9.2, -1.2, 18, -12], [18, 72, 12.5, -6.4, -14, 10], [25, 63, 10.8, -3.1, 22, 8],
+  [32, 78, 14.2, -8.7, -18, -14], [39, 57, 11.7, -2.5, 12, -20], [46, 70, 13.4, -9.9, 25, 4],
+  [53, 61, 9.8, -4.8, -16, 16], [61, 75, 15.6, -11.2, 19, -9], [68, 55, 12.9, -7.3, -22, -6],
+  [74, 69, 10.4, -1.8, 14, 18], [82, 60, 16.1, -12.1, -20, 12], [89, 74, 13.8, -5.5, 17, -16],
+  [8, 81, 15.2, -10.4, 24, -5], [29, 84, 12.1, -6.8, -12, -18], [57, 83, 10.6, -2.9, 16, 14],
+  [77, 82, 14.8, -9.1, -15, -10], [92, 52, 11.2, -4.3, -18, 20], [5, 66, 13.1, -7.8, 15, 13],
+  [14, 43, 10.9, -6.2, 11, -16], [21, 52, 16.4, -13.2, -21, 7], [36, 48, 12.8, -4.4, 18, 11],
+  [49, 53, 15.3, -10.8, -13, -15], [64, 47, 11.6, -2.7, 21, 9], [79, 49, 13.9, -8.4, -16, -18],
+  [87, 63, 17.2, -14.1, 12, 15], [43, 86, 14.6, -5.9, 26, -7], [70, 88, 12.3, -3.7, -24, 6],
+] satisfies Array<[number, number, number, number, number, number]>;
+
 const fallenItems = [
   ["SPCE", "Virgin Galactic", "-92.18%"],
   ["BBBY", "Bed Bath & Beyond", "-87.42%"],
@@ -143,7 +156,21 @@ export function GraveyardScene() {
       <section id="top" className="cemetery-scene relative h-[100svh] w-full overflow-hidden">
         <div className="moon-glow absolute left-[12%] top-[16%] h-[19%] w-[20%] rounded-full" />
         <div className="scene-vignette absolute inset-0" />
-        <div className="magic-sparkles" />
+        <div className="fireflies" aria-hidden="true">
+          {fireflies.map(([x, y, duration, delay, dx, dy], index) => (
+            <span
+              key={index}
+              style={{
+                "--x": `${x}%`,
+                "--y": `${y}%`,
+                "--dur": `${duration}s`,
+                "--delay": `${delay}s`,
+                "--dx": `${dx}px`,
+                "--dy": `${dy}px`,
+              } as React.CSSProperties}
+            />
+          ))}
+        </div>
 
         <header className="relative z-[70] flex items-center justify-between gap-4 px-4 pt-5 sm:px-8 sm:pt-7">
           <Link href="/" className="block" onClick={() => setSelected(null)}>
