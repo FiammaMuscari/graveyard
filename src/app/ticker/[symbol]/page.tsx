@@ -5,7 +5,7 @@ import { SearchBox } from "@/components/SearchBox";
 import { ShareGrave } from "@/components/ShareGrave";
 import { Tombstone } from "@/components/Tombstone";
 import { getLiveReport, getMockReport, getTopBuried } from "@/lib/graveyard";
-import { formatMoney, formatPercent } from "@/lib/utils";
+import { formatAthChange, formatMoney, formatRecovery } from "@/lib/utils";
 
 type PageProps = { params: Promise<{ symbol: string }> };
 
@@ -15,9 +15,10 @@ export async function generateMetadata({ params }: PageProps) {
   const { symbol } = await params;
   const report = getMockReport(symbol);
   if (!report) return { title: `${symbol.toUpperCase()} — Ticker Graveyard` };
+  const athPhrase = report.athChange >= -0.05 ? "at or above ATH" : `${formatAthChange(report.athChange)} from ATH`;
   return {
-    title: `${report.symbol} is ${formatPercent(report.drawdown)} from ATH — Ticker Graveyard`,
-    description: `${report.symbol} needs +${report.recoveryNeeded.toFixed(1)}% to recover. ${report.epitaph}`
+    title: `${report.symbol} is ${athPhrase} — Ticker Graveyard`,
+    description: `${report.symbol} needs ${formatRecovery(report.recoveryNeeded)} to recover. ${report.epitaph}`
   };
 }
 
@@ -27,6 +28,7 @@ export default async function TickerPage({ params }: PageProps) {
   if (!report) notFound();
 
   const similar = getTopBuried().filter((item) => item.symbol !== report.symbol).slice(0, 3);
+  const athMetricLabel = `${report.isAboveAth ? "ATH baseline" : "All-time high"} · ${report.athDate}`;
 
   return (
     <main className="grave-bg min-h-screen">
@@ -52,9 +54,9 @@ export default async function TickerPage({ params }: PageProps) {
 
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
               <Metric label="Current price" value={formatMoney(report.currentPrice)} />
-              <Metric label={`All-time high · ${report.athDate}`} value={formatMoney(report.ath)} />
-              <Metric label="Down from ATH" value={formatPercent(report.drawdown)} danger />
-              <Metric label="Needs to recover" value={`+${report.recoveryNeeded.toFixed(1)}%`} danger />
+              <Metric label={athMetricLabel} value={formatMoney(report.ath)} />
+              <Metric label={report.athChange >= -0.05 ? "At / above ATH" : "Below ATH"} value={formatAthChange(report.athChange)} danger={report.athChange <= -50} />
+              <Metric label="Needs to recover" value={formatRecovery(report.recoveryNeeded)} danger={report.recoveryNeeded > 0} />
             </div>
           </div>
 
@@ -68,8 +70,12 @@ export default async function TickerPage({ params }: PageProps) {
             <div className="rounded-[2rem] border border-white/10 bg-white/[0.07] p-6 backdrop-blur">
               <TrendingUp className="mb-4 h-8 w-8 text-emerald-300" />
               <p className="text-sm font-black uppercase tracking-[0.3em] text-violet-200/70">Spooky math</p>
-              <h2 className="mt-2 text-3xl font-black">-{report.painLevel}% ≠ +{report.painLevel}%</h2>
-              <p className="mt-3 text-violet-100/70">A stock down {Math.abs(report.drawdown).toFixed(1)}% needs +{report.recoveryNeeded.toFixed(1)}% to return to its ATH.</p>
+              <h2 className="mt-2 text-3xl font-black">{report.recoveryNeeded > 0 ? `-${report.painLevel}% ≠ +${report.painLevel}%` : "No comeback needed"}</h2>
+              <p className="mt-3 text-violet-100/70">
+                {report.recoveryNeeded > 0
+                  ? `A stock down ${Math.abs(report.drawdown).toFixed(1)}% needs ${formatRecovery(report.recoveryNeeded)} to return to its ATH.`
+                  : "This ticker is at or above the ATH baseline we found, so recovery is 0.0%."}
+              </p>
             </div>
           </div>
 
@@ -82,7 +88,7 @@ export default async function TickerPage({ params }: PageProps) {
         <div className="grid gap-4 md:grid-cols-3">
           {similar.map((item) => (
             <Link key={item.symbol} href={`/ticker/${item.symbol}`} className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 hover:bg-white/[0.1]">
-              <div className="flex items-center justify-between"><span className="text-2xl font-black">{item.symbol}</span><span className="text-red-300">{formatPercent(item.drawdown)}</span></div>
+              <div className="flex items-center justify-between"><span className="text-2xl font-black">{item.symbol}</span><span className={item.athChange >= -0.05 ? "text-emerald-300" : "text-red-300"}>{formatAthChange(item.athChange)}</span></div>
               <p className="mt-2 text-sm text-violet-100/70"><BadgeCheck className="mr-1 inline h-4 w-4 text-emerald-300" /> {item.status}</p>
             </Link>
           ))}

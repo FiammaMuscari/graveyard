@@ -176,9 +176,84 @@ body {
 .grave-panel { animation: panel-in .35s ease-out both; }
 @keyframes panel-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 
+.zombie-wake {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+.zombie-body,
+.zombie-hands {
+  position: absolute;
+  display: block;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.zombie-body {
+  left: 74%;
+  bottom: -5%;
+  z-index: 3;
+  width: 118%;
+  opacity: 0;
+  transform: translate3d(-14%, 18%, 0) scale(.72) rotate(2deg);
+  transform-origin: bottom center;
+  filter: drop-shadow(0 22px 16px rgba(0,0,0,.42)) drop-shadow(0 0 18px rgba(139,92,246,.18));
+  transition: opacity .28s ease, transform .34s cubic-bezier(.2,.8,.2,1);
+}
+.zombie-hands-trigger {
+  position: absolute;
+  left: -13%;
+  right: -15%;
+  bottom: -7%;
+  z-index: 5;
+  height: 54%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+.zombie-hands {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  filter: drop-shadow(0 14px 10px rgba(0,0,0,.28));
+  transition: transform .22s ease, filter .22s ease;
+}
+.zombie-hands-trigger:focus-visible {
+  outline: 2px solid rgba(110,231,183,.78);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+.zombie-wake:hover .zombie-body,
+.zombie-wake:focus-within .zombie-body,
+.zombie-wake.is-awake .zombie-body {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(.88) rotate(0deg);
+}
+.zombie-wake:hover .zombie-hands,
+.zombie-wake:focus-within .zombie-hands,
+.zombie-wake.is-awake .zombie-hands {
+  transform: translateY(-3%) scale(1.03);
+  filter: drop-shadow(0 16px 12px rgba(0,0,0,.34)) drop-shadow(0 0 14px rgba(110,231,183,.15));
+}
+
 @media (max-width: 640px) {
   .grave-selected { top: 27% !important; width: 54% !important; max-width: none !important; }
   .grave-selected .grave-copy { inset-inline: 22%; top: 27%; }
+  .zombie-body {
+    left: 66%;
+    bottom: -7%;
+    width: 126%;
+  }
+  .zombie-hands-trigger {
+    left: -18%;
+    right: -18%;
+    bottom: -8%;
+    height: 52%;
+  }
 }
 
 /* Selected/search state layout refinements */

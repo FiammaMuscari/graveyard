@@ -15,8 +15,11 @@ export type GraveyardTicker = {
 };
 
 export type GraveyardReport = GraveyardTicker & {
+  athChange: number;
   drawdown: number;
   recoveryNeeded: number;
+  isAboveAth: boolean;
+  isAtAth: boolean;
   status: string;
   statusEmoji: string;
   epitaph: string;
@@ -59,13 +62,22 @@ const epitaphs = [
 ];
 
 export function calculateReport(ticker: GraveyardTicker): GraveyardReport {
-  const drawdown = ((ticker.currentPrice - ticker.ath) / ticker.ath) * 100;
-  const recoveryNeeded = (ticker.ath / ticker.currentPrice - 1) * 100;
+  const currentPrice = Number.isFinite(ticker.currentPrice) && ticker.currentPrice > 0 ? ticker.currentPrice : 0;
+  const ath = Number.isFinite(ticker.ath) && ticker.ath > 0 ? ticker.ath : currentPrice;
+  const athChange = currentPrice > 0 && ath > 0 ? ((currentPrice - ath) / ath) * 100 : 0;
+  const isAtAth = Math.abs(athChange) < 0.05;
+  const isAboveAth = athChange > 0.05;
+  const drawdown = athChange < -0.05 ? athChange : 0;
+  const recoveryNeeded = drawdown < 0 && currentPrice > 0
+    ? Math.max(0, (ath / currentPrice - 1) * 100)
+    : 0;
   const abs = Math.abs(drawdown);
 
   let status = "Alive and complaining";
   let statusEmoji = "🌱";
-  if (abs >= 90) [status, statusEmoji] = ["Financial fossil", "🦴"];
+  if (isAboveAth) [status, statusEmoji] = ["Breaking the curse", "✨"];
+  else if (isAtAth) [status, statusEmoji] = ["At the old gates", "🌕"];
+  else if (abs >= 90) [status, statusEmoji] = ["Financial fossil", "🦴"];
   else if (abs >= 70) [status, statusEmoji] = ["Skeleton portfolio", "💀"];
   else if (abs >= 50) [status, statusEmoji] = ["Graveyard resident", "🪦"];
   else if (abs >= 30) [status, statusEmoji] = ["Half underground", "🧟"];
@@ -75,8 +87,13 @@ export function calculateReport(ticker: GraveyardTicker): GraveyardReport {
 
   return {
     ...ticker,
+    currentPrice,
+    ath,
+    athChange,
     drawdown,
     recoveryNeeded,
+    isAboveAth,
+    isAtAth,
     status,
     statusEmoji,
     epitaph: epitaphs[idx],
@@ -93,8 +110,16 @@ export function getMockReport(symbol: string) {
 export const getReport = getMockReport;
 
 function wallbitAssetToTicker(asset: WallbitAsset, fallback?: GraveyardReport, historicalAth?: { ath: number; athDate: string }): GraveyardTicker {
-  const currentPrice = Number(asset.price) || fallback?.currentPrice || 0;
-  const ath = historicalAth?.ath || fallback?.ath || currentPrice;
+  const livePrice = Number(asset.price);
+  const currentPrice = Number.isFinite(livePrice) && livePrice > 0 ? livePrice : fallback?.currentPrice || 0;
+  const historicalAthValue = historicalAth?.ath;
+  const fallbackAthValue = fallback?.ath;
+  const ath =
+    Number.isFinite(historicalAthValue) && historicalAthValue && historicalAthValue > 0
+      ? historicalAthValue
+      : Number.isFinite(fallbackAthValue) && fallbackAthValue && fallbackAthValue > 0
+        ? fallbackAthValue
+        : currentPrice;
   return {
     symbol: asset.symbol,
     name: asset.name,
@@ -102,7 +127,7 @@ function wallbitAssetToTicker(asset: WallbitAsset, fallback?: GraveyardReport, h
     sector: asset.sector || fallback?.sector || asset.exchange || "Wallbit asset",
     currentPrice,
     ath,
-    athDate: historicalAth?.athDate || fallback?.athDate || "ATH data needed",
+    athDate: historicalAth?.athDate || fallback?.athDate || "Live baseline",
     yearRange: fallback?.yearRange || new Date().getFullYear().toString(),
     availableOnWallbit: true,
     source: "wallbit",

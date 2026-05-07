@@ -1,8 +1,11 @@
 import Link from "next/link";
 import type { GraveyardReport } from "@/lib/graveyard";
-import { formatMoney, formatPercent } from "@/lib/utils";
+import { formatAthChange, formatMoney, formatRecovery } from "@/lib/utils";
 
 export function Tombstone({ report, large = false }: { report: GraveyardReport; large?: boolean }) {
+  const isBelowAth = report.athChange < -0.05;
+  const athChangeColor = !isBelowAth ? "text-emerald-700" : Math.abs(report.athChange) >= 50 ? "text-red-500" : "text-amber-600";
+
   return (
     <div className={large ? "mx-auto w-full max-w-xl" : "w-full"}>
       <div className="relative overflow-hidden rounded-t-[999px] rounded-b-[2.2rem] border border-stone-300/30 bg-gradient-to-br from-stone-300 via-stone-400 to-stone-600 p-5 text-slate-950 shadow-2xl shadow-black/40">
@@ -12,12 +15,12 @@ export function Tombstone({ report, large = false }: { report: GraveyardReport; 
           <h2 className={`${large ? "text-7xl" : "text-5xl"} mt-5 font-black tracking-tight`}>{report.symbol}</h2>
           <p className="mt-2 text-sm font-bold uppercase tracking-widest text-slate-800/70">{report.yearRange}</p>
           <div className="mx-auto my-7 h-1 w-36 rounded-full bg-slate-800/30" />
-          <p className="font-mono text-4xl font-black text-red-500 drop-shadow">{formatPercent(report.drawdown)}</p>
-          <p className="mt-1 text-sm font-black uppercase tracking-widest text-slate-800/70">from all-time high</p>
+          <p className={`font-mono text-4xl font-black drop-shadow ${athChangeColor}`}>{formatAthChange(report.athChange)}</p>
+          <p className="mt-1 text-sm font-black uppercase tracking-widest text-slate-800/70">{report.athChange >= -0.05 ? "at / above all-time high" : "from all-time high"}</p>
           <div className="mt-7 grid gap-3 rounded-3xl bg-slate-950/10 p-4 text-left text-sm font-bold">
             <div className="flex justify-between gap-4"><span>Current</span><span>{formatMoney(report.currentPrice)}</span></div>
-            <div className="flex justify-between gap-4"><span>ATH</span><span>{formatMoney(report.ath)}</span></div>
-            <div className="flex justify-between gap-4"><span>Needs</span><span className="text-red-700">+{report.recoveryNeeded.toFixed(1)}%</span></div>
+            <div className="flex justify-between gap-4"><span>{report.isAboveAth ? "ATH/base" : "ATH"}</span><span>{formatMoney(report.ath)}</span></div>
+            <div className="flex justify-between gap-4"><span>Needs</span><span className={report.recoveryNeeded > 0 ? "text-red-700" : "text-emerald-800"}>{formatRecovery(report.recoveryNeeded)}</span></div>
           </div>
           <p className="mt-7 text-lg font-black">“{report.epitaph}”</p>
         </div>

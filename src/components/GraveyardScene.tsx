@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GraveyardSearch } from "@/components/GraveyardSearch";
+import { formatAthChange, formatRecovery } from "@/lib/utils";
 
 type SceneReport = {
   symbol: string;
@@ -14,8 +15,11 @@ type SceneReport = {
   ath: number;
   athDate: string;
   yearRange: string;
+  athChange: number;
   drawdown: number;
   recoveryNeeded: number;
+  isAboveAth: boolean;
+  isAtAth: boolean;
   status: string;
   statusEmoji: string;
   painLevel: number;
@@ -83,33 +87,46 @@ const defaultGraves: SceneGrave[] = [
   { symbol: "HOOD", title: "HOOD", years: "2021-2022", drop: "-48.91%", asset: "tombstone_07.webp", className: "grave-small front-grave hood-grave left-[77%] bottom-[12%] w-[18%] max-w-[195px]" },
 ];
 
-function formatPercent(value: number) {
-  return `${value.toFixed(2)}%`;
-}
-
 function formatMoney(value: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(value);
 }
 
-function toneFromDrawdown(drawdown: number): "red" | "amber" | "green" {
-  const abs = Math.abs(drawdown);
+function toneFromAthChange(athChange: number): "red" | "amber" | "green" {
+  if (athChange >= -0.05) return "green";
+  const abs = Math.abs(athChange);
   if (abs >= 50) return "red";
-  if (abs >= 15) return "amber";
-  return "green";
+  return "amber";
 }
 
 function titleFromReport(report: SceneReport) {
+  if (report.isAboveAth || report.isAtAth) return "ALIVE";
   const abs = Math.abs(report.drawdown);
   if (abs < 15) return "ALIVE";
   if (abs < 50) return "HURT";
   return report.symbol;
 }
 
+function athMetricLabel(report: SceneReport) {
+  if (report.isAboveAth) return "Above ATH";
+  if (report.isAtAth) return "At ATH";
+  return "Below ATH";
+}
+
+function athValueLabel(report: SceneReport) {
+  return `${report.isAboveAth ? "ATH baseline" : "ATH"} · ${report.athDate}`;
+}
+
+function canWakeZombie(report: SceneReport) {
+  return report.athChange >= -0.05 && report.recoveryNeeded === 0;
+}
+
 export function GraveyardScene() {
   const [selected, setSelected] = useState<SceneReport | null>(null);
   const [loading, setLoading] = useState(false);
   const [ticker, setTicker] = useState<string | null>(null);
+  const [awakenedZombieSymbol, setAwakenedZombieSymbol] = useState<string | null>(null);
   const requestId = useRef(0);
+  const zombieAwake = Boolean(selected && awakenedZombieSymbol === selected.symbol);
 
   const loadTicker = useCallback((symbol: string, scrollToTop = false) => {
     if (scrollToTop) {
@@ -147,10 +164,10 @@ export function GraveyardScene() {
       symbol: selected.symbol,
       title: titleFromReport(selected),
       years: selected.yearRange,
-      drop: formatPercent(selected.drawdown),
+      drop: formatAthChange(selected.athChange),
       asset: "tombstone_02.webp",
       className: "grave-selected left-[34%] top-[18%] w-[24%] max-w-[315px] -translate-x-1/2",
-      tone: toneFromDrawdown(selected.drawdown),
+      tone: toneFromAthChange(selected.athChange),
       report: selected,
     }];
   }, [selected]);
@@ -187,6 +204,32 @@ export function GraveyardScene() {
         <div className="absolute inset-0 z-20">
           {graves.map((grave) => (
             <article key={grave.symbol} className={`asset-grave ${grave.tone ? `grave-tone-${grave.tone}` : ""} absolute z-20 ${grave.className}`}>
+              {grave.report && canWakeZombie(grave.report) && (
+                <div className={`zombie-wake ${zombieAwake ? "is-awake" : ""}`} aria-hidden={false}>
+                  <img
+                    src="/graveyard-assets/optimized/zombie.webp"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    className="zombie-body"
+                  />
+                  <button
+                    type="button"
+                    aria-label={zombieAwake ? "Hide the alive zombie" : "Wake the alive zombie"}
+                    aria-pressed={zombieAwake}
+                    onClick={() => setAwakenedZombieSymbol((value) => value === grave.symbol ? null : grave.symbol)}
+                    className="zombie-hands-trigger"
+                  >
+                    <img
+                      src="/graveyard-assets/optimized/zombie-hands.webp"
+                      alt=""
+                      loading="eager"
+                      decoding="async"
+                      className="zombie-hands"
+                    />
+                  </button>
+                </div>
+              )}
               <img src={`/graveyard-assets/optimized/${grave.asset}`} alt="" loading={grave.symbol === "HOOD" || grave.symbol === "RIVN" || grave.symbol === "PLTR" ? "lazy" : "eager"} decoding="async" className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_18px_14px_rgba(0,0,0,0.55)]" />
               <div className="grave-copy absolute inset-x-[20%] top-[25%] text-center">
                 <p className="grave-title">{grave.title}</p>
@@ -210,9 +253,9 @@ export function GraveyardScene() {
             </div>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <Metric label="Now" value={formatMoney(selected.currentPrice)} tone="price" />
-              <Metric label={`ATH · ${selected.athDate}`} value={formatMoney(selected.ath)} tone="ath" />
-              <Metric label="Damage" value={formatPercent(selected.drawdown)} tone={selected.drawdown < -15 ? "danger" : "good"} />
-              <Metric label="Recovery" value={`+${selected.recoveryNeeded.toFixed(1)}%`} tone={selected.recoveryNeeded > 50 ? "warning" : "good"} />
+              <Metric label={athValueLabel(selected)} value={formatMoney(selected.ath)} tone="ath" />
+              <Metric label={athMetricLabel(selected)} value={formatAthChange(selected.athChange)} tone={selected.drawdown < -15 ? "danger" : "good"} />
+              <Metric label="Recovery" value={formatRecovery(selected.recoveryNeeded)} tone={selected.recoveryNeeded > 50 ? "warning" : "good"} />
             </div>
             <p className="mt-2 text-xs font-semibold text-violet-100/75 sm:mt-3 sm:text-sm">
               {selected.type} · {selected.sector} ·{" "}
@@ -224,7 +267,7 @@ export function GraveyardScene() {
               >
                 Wallbit API
               </a>{" "}
-              price + Stooq ATH.
+              price + Stooq ATH baseline.
             </p>
           </aside>
         )}
