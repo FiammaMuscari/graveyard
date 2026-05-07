@@ -20,7 +20,7 @@ export default function NotFound() {
             />
           </div>
           <p className="text-xs font-black uppercase tracking-[.35em] text-violet-300/70">Ticker ghost not found</p>
-          <h1 className="mt-3 text-4xl font-black leading-tight sm:text-6xl">This grave is empty</h1>
+          <h1 className="display-title mt-3 text-4xl font-black leading-tight sm:text-6xl">This grave is empty</h1>
           <p className="mx-auto mt-4 max-w-xl text-sm font-semibold text-violet-100/70 sm:text-base">
             We couldn&apos;t find that symbol in Wallbit or the fallback cemetery. Try a valid ticker like AAPL, TSLA, NVDA, META, VOO, QQQ or ARKK.
           </p>

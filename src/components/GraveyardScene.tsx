@@ -60,10 +60,10 @@ const defaultGraves: SceneGrave[] = [
   { symbol: "BBBY", title: "STONKS", years: "2021-2022", drop: "-87.42%", asset: "tombstone_01.webp", className: "grave-hero left-[7%] top-[22%] w-[26%] max-w-[270px]" },
   { symbol: "FB", title: "META", years: "2021-2022", drop: "-73.21%", asset: "tombstone_02.webp", className: "grave-hero left-[38%] top-[22%] w-[27%] max-w-[280px]" },
   { symbol: "SPCE", title: "SPCE", years: "2019-2021", drop: "-92.18%", asset: "tombstone_03.webp", className: "grave-hero left-[66%] top-[22%] w-[27%] max-w-[280px]" },
-  { symbol: "NIO", title: "NIO", years: "2021-2024", drop: "-78.11%", asset: "tombstone_04.webp", className: "grave-small left-[2%] bottom-[13%] w-[22%] max-w-[190px]" },
-  { symbol: "PLTR", title: "PLTR", years: "2021-2022", drop: "-56.27%", asset: "tombstone_05.webp", className: "grave-small left-[27%] bottom-[12%] w-[20%] max-w-[180px]" },
-  { symbol: "RIVN", title: "RIVN", years: "2021-2023", drop: "-74.09%", asset: "tombstone_06.webp", className: "grave-small left-[52%] bottom-[12%] w-[20%] max-w-[180px]" },
-  { symbol: "HOOD", title: "HOOD", years: "2021-2022", drop: "-48.91%", asset: "tombstone_07.webp", className: "grave-small left-[76%] bottom-[13%] w-[20%] max-w-[180px]" },
+  { symbol: "NIO", title: "NIO", years: "2021-2024", drop: "-78.11%", asset: "tombstone_04.webp", className: "grave-small front-grave left-[2.5%] bottom-[12%] w-[19%] max-w-[205px]" },
+  { symbol: "PLTR", title: "PLTR", years: "2021-2022", drop: "-56.27%", asset: "tombstone_05.webp", className: "grave-small front-grave left-[27%] bottom-[11%] w-[18%] max-w-[190px]" },
+  { symbol: "RIVN", title: "RIVN", years: "2021-2023", drop: "-74.09%", asset: "tombstone_06.webp", className: "grave-small front-grave left-[52%] bottom-[11%] w-[18%] max-w-[190px]" },
+  { symbol: "HOOD", title: "HOOD", years: "2021-2022", drop: "-48.91%", asset: "tombstone_07.webp", className: "grave-small front-grave hood-grave left-[77%] bottom-[12%] w-[18%] max-w-[195px]" },
 ];
 
 function formatPercent(value: number) {
@@ -143,10 +143,11 @@ export function GraveyardScene() {
       <section id="top" className="cemetery-scene relative h-[100svh] w-full overflow-hidden">
         <div className="moon-glow absolute left-[12%] top-[16%] h-[19%] w-[20%] rounded-full" />
         <div className="scene-vignette absolute inset-0" />
+        <div className="magic-sparkles" />
 
         <header className="relative z-[70] flex items-center justify-between gap-4 px-4 pt-5 sm:px-8 sm:pt-7">
           <Link href="/" className="block" onClick={() => setSelected(null)}>
-            <span className="block text-xl font-black leading-tight drop-shadow sm:text-4xl">Ticker Graveyard</span>
+            <span className="brand-title block text-xl font-black leading-tight drop-shadow sm:text-4xl">Ticker Graveyard</span>
             <span className="mt-1 hidden text-sm font-semibold text-white/90 drop-shadow sm:block sm:text-lg">A cemetery for stocks that didn&apos;t make it.</span>
           </Link>
           <GraveyardSearch mode="scene" />
@@ -209,7 +210,7 @@ export function GraveyardScene() {
         <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col">
           <div className="flex flex-col gap-4 pb-4 pt-2 text-center sm:pb-6">
             <p className="text-xs font-black uppercase tracking-[.35em] text-violet-300/70">More fallen items</p>
-            <h2 className="text-3xl font-black sm:text-5xl">Twenty haunted tickers</h2>
+            <h2 className="display-title text-3xl font-black sm:text-5xl">Twenty haunted tickers</h2>
             <p className="mx-auto max-w-2xl text-sm font-semibold text-violet-100/62 sm:text-base">
               A lightweight watchlist preview. Tap any symbol to summon its tombstone with live Wallbit price data and Stooq ATH math.
             </p>

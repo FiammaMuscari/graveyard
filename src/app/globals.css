@@ -496,3 +496,215 @@ body {
 @media (max-width: 640px) {
   .cemetery-scene { background-position: 47% center; }
 }
+
+/* Typography refresh: local/system fonts for stable localhost rendering */
+:root {
+  --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Trebuchet MS", Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-stone: "Copperplate", "Copperplate Gothic Light", Georgia, "Times New Roman", serif;
+  --font-number: "Aptos Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+body {
+  font-family: var(--font-ui) !important;
+  letter-spacing: -0.012em;
+  text-rendering: optimizeLegibility;
+}
+.brand-title,
+.display-title {
+  font-family: var(--font-display);
+  letter-spacing: -0.045em;
+}
+.brand-title {
+  text-shadow: 0 2px 16px rgba(255,255,255,.10), 0 2px 8px rgba(0,0,0,.32);
+}
+.display-title {
+  text-shadow: 0 2px 20px rgba(139,92,246,.18), 0 2px 8px rgba(0,0,0,.35);
+}
+.asset-grave {
+  font-family: var(--font-stone) !important;
+}
+.grave-title {
+  font-family: var(--font-stone);
+  letter-spacing: .015em !important;
+  font-weight: 700 !important;
+}
+.years,
+.ticker {
+  font-family: var(--font-number) !important;
+  letter-spacing: -0.02em;
+}
+.drop {
+  font-family: var(--font-number) !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.08em;
+}
+.search-shell input {
+  font-family: var(--font-ui);
+  letter-spacing: .01em;
+}
+.fallen-card button,
+.grave-panel {
+  font-family: var(--font-ui);
+}
+
+/* Slightly larger text for improved readability */
+body { font-size: 16.5px; }
+.brand-title { font-size: clamp(1.55rem, 3vw, 2.35rem) !important; }
+.display-title { font-size: clamp(2.15rem, 4.2vw, 3.35rem) !important; }
+.grave-title { transform: scale(1.04); transform-origin: center; }
+.years,
+.ticker { font-size: 1.05em !important; }
+.fallen-card button { font-size: 1.03em; }
+.grave-panel { font-size: 1.03em; }
+.search-shell input { font-size: 1.02rem !important; }
+
+@media (max-width: 640px) {
+  body { font-size: 16px; }
+  .brand-title { font-size: clamp(1.45rem, 6vw, 1.9rem) !important; }
+  .display-title { font-size: clamp(2rem, 8vw, 2.6rem) !important; }
+}
+
+/* Front graves: larger + readable on light gray stone */
+.front-grave .grave-copy {
+  top: 31% !important;
+  inset-inline: 20% !important;
+}
+.front-grave .grave-title {
+  color: #171724 !important;
+  font-size: clamp(.9rem, 2vw, 1.35rem) !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.45) !important;
+}
+.front-grave .years,
+.front-grave .ticker {
+  color: #171724 !important;
+  font-weight: 900 !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.36) !important;
+}
+.front-grave .drop {
+  color: #b3221d !important;
+  font-size: clamp(.78rem, 1.75vw, 1.12rem) !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.55), 0 0 3px rgba(255,255,255,.18) !important;
+}
+
+@media (max-width: 640px) {
+  .front-grave { width: 24% !important; }
+  .front-grave .grave-copy { top: 32% !important; inset-inline: 20% !important; }
+  .front-grave .grave-title { font-size: clamp(.68rem, 3.2vw, .95rem) !important; }
+  .front-grave .drop { font-size: clamp(.58rem, 2.7vw, .8rem) !important; }
+}
+
+/* Rebalance front row tombstone scale/position */
+.front-grave .grave-copy { top: 30% !important; inset-inline: 19% !important; }
+.front-grave .grave-title { font-size: clamp(.78rem, 1.55vw, 1.05rem) !important; }
+.front-grave .years { font-size: clamp(.28rem, .72vw, .42rem) !important; }
+.front-grave .drop { font-size: clamp(.62rem, 1.25vw, .82rem) !important; }
+.front-grave .ticker { font-size: clamp(.32rem, .72vw, .46rem) !important; }
+
+@media (max-width: 640px) {
+  .front-grave { width: 18% !important; }
+  .front-grave .grave-title { font-size: clamp(.58rem, 2.5vw, .78rem) !important; }
+  .front-grave .drop { font-size: clamp(.48rem, 2.1vw, .65rem) !important; }
+}
+
+/* Improve all tombstone label readability */
+.asset-grave:not(.grave-selected) .grave-title {
+  font-size: clamp(1.15rem, 2.85vw, 1.95rem) !important;
+}
+.asset-grave:not(.grave-selected) .years {
+  font-size: clamp(.48rem, 1.08vw, .68rem) !important;
+  margin-top: 6% !important;
+}
+.asset-grave:not(.grave-selected) .drop {
+  font-size: clamp(1rem, 2.25vw, 1.45rem) !important;
+  margin-top: 5% !important;
+}
+.asset-grave:not(.grave-selected) .ticker {
+  font-size: clamp(.58rem, 1.05vw, .76rem) !important;
+}
+.front-grave .grave-title {
+  font-size: clamp(.88rem, 1.75vw, 1.24rem) !important;
+}
+.front-grave .years {
+  font-size: clamp(.36rem, .82vw, .52rem) !important;
+}
+.front-grave .drop {
+  font-size: clamp(.72rem, 1.42vw, .98rem) !important;
+}
+.front-grave .ticker {
+  font-size: clamp(.4rem, .82vw, .58rem) !important;
+}
+
+/* Delicate magical blue fantasy glow in the cemetery background */
+.cemetery-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background:
+    radial-gradient(ellipse at 23% 62%, rgba(75, 177, 255, .18), transparent 24%),
+    radial-gradient(ellipse at 58% 70%, rgba(72, 116, 255, .14), transparent 26%),
+    radial-gradient(ellipse at 84% 62%, rgba(97, 226, 255, .12), transparent 22%),
+    linear-gradient(90deg, transparent 0 12%, rgba(69, 155, 255, .055) 20%, transparent 34% 46%, rgba(101, 74, 255, .05) 56%, transparent 72%);
+  mix-blend-mode: screen;
+  opacity: .78;
+}
+.cemetery-scene .magic-sparkles {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 18% 58%, rgba(170, 225, 255, .55) 0 1px, transparent 2px),
+    radial-gradient(circle at 42% 64%, rgba(155, 205, 255, .45) 0 1px, transparent 2px),
+    radial-gradient(circle at 71% 57%, rgba(180, 238, 255, .50) 0 1px, transparent 2px),
+    radial-gradient(circle at 88% 72%, rgba(140, 200, 255, .38) 0 1px, transparent 2px);
+  background-size: 210px 170px, 260px 190px, 230px 160px, 290px 210px;
+  filter: blur(.15px);
+  opacity: .42;
+}
+
+@media (max-width: 640px) {
+  .asset-grave:not(.grave-selected) .grave-title { font-size: clamp(.74rem, 3.25vw, 1rem) !important; }
+  .asset-grave:not(.grave-selected) .drop { font-size: clamp(.62rem, 2.7vw, .86rem) !important; }
+  .front-grave .grave-title { font-size: clamp(.62rem, 2.75vw, .84rem) !important; }
+  .front-grave .drop { font-size: clamp(.52rem, 2.3vw, .72rem) !important; }
+  .cemetery-scene::after { opacity: .58; }
+}
+
+/* Make the 4 front graveyards physically larger */
+.front-grave .grave-copy { top: 31% !important; }
+.front-grave .grave-title { font-size: clamp(.95rem, 1.9vw, 1.35rem) !important; }
+.front-grave .years { font-size: clamp(.38rem, .9vw, .56rem) !important; }
+.front-grave .drop { font-size: clamp(.8rem, 1.55vw, 1.08rem) !important; }
+.front-grave .ticker { font-size: clamp(.44rem, .9vw, .62rem) !important; }
+
+@media (max-width: 640px) {
+  .front-grave { width: 22% !important; }
+}
+
+/* Slightly smaller title only for the 4 front graves */
+.front-grave .grave-title { font-size: clamp(.86rem, 1.7vw, 1.22rem) !important; }
+@media (max-width: 640px) {
+  .front-grave .grave-title { font-size: clamp(.58rem, 2.55vw, .78rem) !important; }
+}
+
+/* One more small reduction for front grave titles only */
+.front-grave .grave-title { font-size: clamp(.8rem, 1.55vw, 1.1rem) !important; }
+@media (max-width: 640px) {
+  .front-grave .grave-title { font-size: clamp(.54rem, 2.35vw, .72rem) !important; }
+}
+
+/* Tiny physical bump for the 4 front grave images */
+.front-grave { transform: scale(1.025); transform-origin: bottom center; }
+@media (max-width: 640px) {
+  .front-grave { transform: scale(1.02); }
+}
+
+/* HOOD front grave needs slightly tighter centered text */
+.hood-grave .grave-copy { inset-inline: 24% !important; transform: translateX(2px) rotate(-1deg) !important; }
+.hood-grave .grave-title { font-size: clamp(.72rem, 1.42vw, 1rem) !important; letter-spacing: 0 !important; }
+@media (max-width: 640px) {
+  .hood-grave .grave-copy { inset-inline: 25% !important; transform: translateX(1px) rotate(-1deg) !important; }
+  .hood-grave .grave-title { font-size: clamp(.5rem, 2.2vw, .68rem) !important; }
+}
