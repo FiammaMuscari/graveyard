@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Ticker Graveyard",
     description: "Find out how buried your favorite ticker is.",
-    images: ["/share-card-template.svg"]
+    images: ["/graveyard-assets/optimized/graveyard_background.webp"]
   }
 };
 
