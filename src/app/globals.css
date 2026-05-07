@@ -505,10 +505,10 @@ body {
 
 /* Typography refresh: local/system fonts for stable localhost rendering */
 :root {
-  --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-display: "Trebuchet MS", Inter, ui-sans-serif, system-ui, sans-serif;
-  --font-stone: "Copperplate", "Copperplate Gothic Light", Georgia, "Times New Roman", serif;
-  --font-number: "Aptos Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-ui: var(--font-inter), Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: var(--font-space-grotesk), "Space Grotesk", Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-stone: var(--font-cinzel), Cinzel, Georgia, "Times New Roman", serif;
+  --font-number: var(--font-inter), Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 body {
   font-family: var(--font-ui) !important;
@@ -519,6 +519,7 @@ body {
 .display-title {
   font-family: var(--font-display);
   letter-spacing: -0.045em;
+  font-weight: 700 !important;
 }
 .brand-title {
   text-shadow: 0 2px 16px rgba(255,255,255,.10), 0 2px 8px rgba(0,0,0,.32);
@@ -534,13 +535,19 @@ body {
   letter-spacing: .015em !important;
   font-weight: 700 !important;
 }
-.years,
 .ticker {
+  font-family: var(--font-stone) !important;
+  font-weight: 700 !important;
+  letter-spacing: .015em;
+}
+.years {
   font-family: var(--font-number) !important;
+  font-weight: 600 !important;
   letter-spacing: -0.02em;
 }
 .drop {
   font-family: var(--font-number) !important;
+  font-weight: 600 !important;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.08em;
 }
@@ -1097,4 +1104,46 @@ body { font-size: 16.5px; }
     font-size: .86rem !important;
   }
   .search-shell input::placeholder { font-size: .82rem; }
+}
+
+/* Font mapping requested for local preview */
+.brand-title {
+  font-family: var(--font-display) !important;
+  font-weight: 700 !important;
+}
+body,
+button,
+input,
+.fallen-card button,
+.grave-panel {
+  font-family: var(--font-ui) !important;
+}
+.grave-title,
+.ticker,
+.front-grave .ticker,
+.hood-grave .grave-title {
+  font-family: var(--font-stone) !important;
+  font-weight: 700 !important;
+}
+.years,
+.drop,
+.front-grave .years,
+.front-grave .drop {
+  font-family: var(--font-number) !important;
+  font-weight: 600 !important;
+}
+
+/* Mobile scene: no fake moon glow and graves grounded on the path */
+@media (max-width: 640px) {
+  .moon-glow { display: none !important; }
+
+  .cemetery-scene .asset-grave:not(.grave-selected) {
+    width: 28% !important;
+  }
+  .cemetery-scene .asset-grave:nth-child(1) { left: 12% !important; top: 22% !important; }
+  .cemetery-scene .asset-grave:nth-child(2) { left: 59% !important; top: 22% !important; }
+  .cemetery-scene .asset-grave:nth-child(3) { left: 12% !important; top: 43% !important; }
+  .cemetery-scene .asset-grave:nth-child(4) { left: 59% !important; top: 43% !important; }
+  .cemetery-scene .asset-grave:nth-child(5) { left: 12% !important; top: 64% !important; }
+  .cemetery-scene .asset-grave:nth-child(6) { left: 59% !important; top: 64% !important; }
 }
