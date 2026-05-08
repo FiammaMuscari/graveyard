@@ -92,7 +92,7 @@ function formatMoney(value: number) {
 }
 
 function toneFromAthChange(athChange: number): "red" | "amber" | "green" {
-  if (athChange >= -0.05) return "green";
+  if (athChange > -15) return "green";
   const abs = Math.abs(athChange);
   if (abs >= 50) return "red";
   return "amber";
@@ -117,16 +117,14 @@ function athValueLabel(report: SceneReport) {
 }
 
 function canWakeZombie(report: SceneReport) {
-  return report.athChange >= -0.05 && report.recoveryNeeded === 0;
+  return toneFromAthChange(report.athChange) === "green";
 }
 
 export function GraveyardScene() {
   const [selected, setSelected] = useState<SceneReport | null>(null);
   const [loading, setLoading] = useState(false);
   const [ticker, setTicker] = useState<string | null>(null);
-  const [awakenedZombieSymbol, setAwakenedZombieSymbol] = useState<string | null>(null);
   const requestId = useRef(0);
-  const zombieAwake = Boolean(selected && awakenedZombieSymbol === selected.symbol);
 
   const loadTicker = useCallback((symbol: string, scrollToTop = false) => {
     if (scrollToTop) {
@@ -205,29 +203,14 @@ export function GraveyardScene() {
           {graves.map((grave) => (
             <article key={grave.symbol} className={`asset-grave ${grave.tone ? `grave-tone-${grave.tone}` : ""} absolute z-20 ${grave.className}`}>
               {grave.report && canWakeZombie(grave.report) && (
-                <div className={`zombie-wake ${zombieAwake ? "is-awake" : ""}`} aria-hidden={false}>
+                <div className="zombie-wake" aria-hidden="true">
                   <img
-                    src="/graveyard-assets/optimized/zombie.webp"
+                    src="/graveyard-assets/optimized/zombie-hands.webp"
                     alt=""
-                    loading="lazy"
+                    loading="eager"
                     decoding="async"
-                    className="zombie-body"
+                    className="zombie-hands"
                   />
-                  <button
-                    type="button"
-                    aria-label={zombieAwake ? "Hide the alive zombie" : "Wake the alive zombie"}
-                    aria-pressed={zombieAwake}
-                    onClick={() => setAwakenedZombieSymbol((value) => value === grave.symbol ? null : grave.symbol)}
-                    className="zombie-hands-trigger"
-                  >
-                    <img
-                      src="/graveyard-assets/optimized/zombie-hands.webp"
-                      alt=""
-                      loading="eager"
-                      decoding="async"
-                      className="zombie-hands"
-                    />
-                  </button>
                 </div>
               )}
               <img src={`/graveyard-assets/optimized/${grave.asset}`} alt="" loading={grave.symbol === "HOOD" || grave.symbol === "RIVN" || grave.symbol === "PLTR" ? "lazy" : "eager"} decoding="async" className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_18px_14px_rgba(0,0,0,0.55)]" />
@@ -239,7 +222,7 @@ export function GraveyardScene() {
               </div>
             </article>
           ))}
-          <div className="hand absolute bottom-[15%] right-[5%] z-10 h-28 w-24 sm:h-40 sm:w-32" />
+          {!selected && <div className="hand absolute bottom-[15%] right-[5%] z-10 h-28 w-24 sm:h-40 sm:w-32" />}
         </div>
 
         {selected && (
