@@ -16,7 +16,7 @@ export function isValidSymbol(value: string) {
 }
 
 export function normalizeSearch(value: string) {
-  return value.trim().replace(/[^a-zA-Z0-9.\-\s]/g, "").slice(0, 32);
+  return value.trim().replace(/[^a-zA-Z0-9.\-\s]/g, "").replace(/\s+/g, " ").slice(0, 32);
 }
 
 export function isValidSearch(value: string) {

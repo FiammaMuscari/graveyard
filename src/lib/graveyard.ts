@@ -61,6 +61,8 @@ const epitaphs = [
   "Beloved by analysts. Betrayed by gravity."
 ];
 
+const SEARCH_STOPWORDS = new Set(["inc", "common", "stock", "corp", "corporation", "co", "company", "class", "shares", "plc", "ltd", "limited", "etf", "trust", "series"]);
+
 export function calculateReport(ticker: GraveyardTicker): GraveyardReport {
   const currentPrice = Number.isFinite(ticker.currentPrice) && ticker.currentPrice > 0 ? ticker.currentPrice : 0;
   const ath = Number.isFinite(ticker.ath) && ticker.ath > 0 ? ticker.ath : currentPrice;
@@ -112,6 +114,7 @@ export const getReport = getMockReport;
 function wallbitAssetToTicker(asset: WallbitAsset, fallback?: GraveyardReport, historicalAth?: { ath: number; athDate: string }): GraveyardTicker {
   const livePrice = Number(asset.price);
   const currentPrice = Number.isFinite(livePrice) && livePrice > 0 ? livePrice : fallback?.currentPrice || 0;
+  const isEtf = asset.asset_type.toLowerCase().includes("etf") || /\bETF\b/i.test(asset.name) || fallback?.type === "ETF";
   const historicalAthValue = historicalAth?.ath;
   const fallbackAthValue = fallback?.ath;
   const ath =
@@ -123,7 +126,7 @@ function wallbitAssetToTicker(asset: WallbitAsset, fallback?: GraveyardReport, h
   return {
     symbol: asset.symbol,
     name: asset.name,
-    type: asset.asset_type === "ETF" ? "ETF" : "Stock",
+    type: isEtf ? "ETF" : "Stock",
     sector: asset.sector || fallback?.sector || asset.exchange || "Wallbit asset",
     currentPrice,
     ath,
@@ -152,11 +155,19 @@ export async function getLiveReport(symbol: string) {
 
 export async function searchLiveReports(search: string, limit = 10) {
   const normalized = search.toLowerCase();
+  const terms = normalized.split(/\s+/).map((term) => term.replace(/\.$/, "")).filter(Boolean);
+  if (terms.length === 0) return [];
+  const meaningfulTerms = terms.filter((term) => !SEARCH_STOPWORDS.has(term));
+  const matchTerms = meaningfulTerms.length ? meaningfulTerms : terms;
+
   const localMatches = getTopBuried().filter((item) =>
-    item.symbol.toLowerCase().includes(normalized) || item.name.toLowerCase().includes(normalized)
+    matchTerms.every((term) => item.symbol.toLowerCase().includes(term) || item.name.toLowerCase().includes(term))
   );
 
-  const assets = await searchWallbitAssets(search, limit);
+  let assets = await searchWallbitAssets(search, limit);
+  if (assets.length === 0 && matchTerms.join(" ") !== normalized) {
+    assets = await searchWallbitAssets(matchTerms.join(" "), limit);
+  }
   const liveMatches = assets.map((asset) => {
     const fallback = getMockReport(asset.symbol);
     return calculateReport(wallbitAssetToTicker(asset, fallback ?? undefined));

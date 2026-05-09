@@ -37,6 +37,13 @@ type SceneGrave = {
   report?: SceneReport;
 };
 
+type SceneTickerDetail = string | { symbol: string; name?: string; query?: string };
+type SceneUrlPatch = {
+  grave?: string | null;
+  query?: string | null;
+  view?: "fallen" | null;
+};
+
 const WALLBIT_ASSETS_API_DOCS = "https://developer.wallbit.io/docs/api-reference/assets/list";
 
 
@@ -120,23 +127,102 @@ function canWakeZombie(report: SceneReport) {
   return toneFromAthChange(report.athChange) === "green";
 }
 
+function normalizeSceneSymbol(value: string) {
+  return value.trim().replace(/[^a-zA-Z.]/g, "").toUpperCase().slice(0, 12);
+}
+
+function visibleQuerySlug(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9.\-\s]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 64);
+}
+
+function readableQuery(value: string | null) {
+  return value?.replace(/-/g, " ").trim() || "";
+}
+
+function encodeSpell(value: string) {
+  const bytes = new TextEncoder().encode(value);
+  let binary = "";
+  bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+  return window.btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "").slice(0, 96);
+}
+
+function writeSceneUrl(patch: SceneUrlPatch, hash?: "top" | "fallen", mode: "push" | "replace" = "replace") {
+  const params = new URLSearchParams(window.location.search);
+
+  if (patch.grave !== undefined) {
+    const grave = patch.grave ? normalizeSceneSymbol(patch.grave) : "";
+    if (grave) params.set("grave", grave);
+    else {
+      params.delete("grave");
+      params.delete("spell");
+    }
+  }
+
+  if (patch.query !== undefined) {
+    const query = patch.query ? visibleQuerySlug(patch.query) : "";
+    if (query) params.set("q", query);
+    else params.delete("q");
+  }
+
+  const grave = params.get("grave");
+  const query = params.get("q");
+  if (grave && query) params.set("spell", encodeSpell(`${grave}:${query}`));
+  else params.delete("spell");
+
+  if (patch.view !== undefined) {
+    if (patch.view) params.set("view", patch.view);
+    else params.delete("view");
+  }
+
+  const ordered = new URLSearchParams();
+  (["grave", "q", "spell", "view"] as const).forEach((key) => {
+    const value = params.get(key);
+    if (value) ordered.set(key, value);
+  });
+
+  const search = ordered.toString();
+  const nextUrl = `${window.location.pathname}${search ? `?${search}` : ""}${hash ? `#${hash}` : ""}`;
+  window.history[mode === "push" ? "pushState" : "replaceState"](null, "", nextUrl);
+}
+
+function scrollToSceneTarget(id: "top" | "fallen", behavior: ScrollBehavior = "smooth") {
+  window.requestAnimationFrame(() => {
+    document.getElementById(id)?.scrollIntoView({ behavior, block: "start" });
+  });
+}
+
 export function GraveyardScene() {
   const [selected, setSelected] = useState<SceneReport | null>(null);
   const [loading, setLoading] = useState(false);
   const [ticker, setTicker] = useState<string | null>(null);
+  const [loadingLabel, setLoadingLabel] = useState<string | null>(null);
   const requestId = useRef(0);
 
-  const loadTicker = useCallback((symbol: string, scrollToTop = false) => {
+  const loadTicker = useCallback((symbol: string, scrollToTop = false, label?: string, updateUrl = true) => {
+    const cleanSymbol = normalizeSceneSymbol(symbol);
+    if (!cleanSymbol) return;
+
     if (scrollToTop) {
-      document.getElementById("top")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      scrollToSceneTarget("top");
     }
 
     const id = requestId.current + 1;
     requestId.current = id;
-    setTicker(symbol);
+    setTicker(cleanSymbol);
+    setLoadingLabel(label || cleanSymbol);
     setLoading(true);
 
-    fetch(`/api/ticker/${encodeURIComponent(symbol)}`)
+    if (updateUrl) {
+      writeSceneUrl({ grave: cleanSymbol, query: label || cleanSymbol, view: null }, undefined, "push");
+    }
+
+    fetch(`/api/ticker/${encodeURIComponent(cleanSymbol)}`)
       .then((response) => (response.ok ? response.json() : null))
       .then((data: SceneReport | null) => {
         if (requestId.current === id && data) setSelected(data);
@@ -148,13 +234,61 @@ export function GraveyardScene() {
 
   useEffect(() => {
     function onTicker(event: Event) {
-      const symbol = (event as CustomEvent<string>).detail;
-      if (symbol) loadTicker(symbol);
+      const detail = (event as CustomEvent<SceneTickerDetail>).detail;
+      const symbol = typeof detail === "string" ? detail : detail.symbol;
+      const label = typeof detail === "string" ? detail : detail.query || (detail.name ? `${detail.symbol} ${detail.name}` : detail.symbol);
+      if (symbol) loadTicker(symbol, false, label);
     }
 
     window.addEventListener("graveyard:ticker", onTicker);
     return () => window.removeEventListener("graveyard:ticker", onTicker);
   }, [loadTicker]);
+
+  useEffect(() => {
+    function syncFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const symbol = normalizeSceneSymbol(params.get("grave") ?? params.get("ticker") ?? "");
+      if (symbol) {
+        loadTicker(symbol, false, readableQuery(params.get("q")) || symbol, false);
+      } else {
+        requestId.current += 1;
+        setSelected(null);
+        setTicker(null);
+        setLoading(false);
+        setLoadingLabel(null);
+      }
+
+      if (params.get("view") === "fallen" || window.location.hash === "#fallen") {
+        window.setTimeout(() => scrollToSceneTarget("fallen", "auto"), symbol ? 450 : 120);
+      }
+    }
+
+    const timeout = window.setTimeout(syncFromUrl, 0);
+    window.addEventListener("popstate", syncFromUrl);
+    return () => {
+      window.clearTimeout(timeout);
+      window.removeEventListener("popstate", syncFromUrl);
+    };
+  }, [loadTicker]);
+
+  const clearSelected = useCallback(() => {
+    setSelected(null);
+    setTicker(null);
+    setLoadingLabel(null);
+    writeSceneUrl({ grave: null, query: null, view: null }, undefined, "replace");
+  }, []);
+
+  const goTop = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    writeSceneUrl({ view: null }, "top", "replace");
+    scrollToSceneTarget("top");
+  }, []);
+
+  const goFallen = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    writeSceneUrl({ view: "fallen" }, "fallen", "replace");
+    scrollToSceneTarget("fallen");
+  }, []);
 
   const graves = useMemo<SceneGrave[]>(() => {
     if (!selected) return defaultGraves;
@@ -192,7 +326,7 @@ export function GraveyardScene() {
         </div>
 
         <header className="relative z-[70] flex items-center justify-between gap-4 px-4 pt-5 sm:px-8 sm:pt-7">
-          <Link href="/" className="block" onClick={() => setSelected(null)}>
+          <Link href="/" className="block" onClick={(event) => { event.preventDefault(); clearSelected(); scrollToSceneTarget("top"); }}>
             <span className="brand-title block text-xl font-black leading-tight drop-shadow sm:text-4xl">Gravefy</span>
             <span className="mt-1 hidden text-sm font-semibold text-white/90 drop-shadow sm:block sm:text-lg">Where hype goes to rest</span>
           </Link>
@@ -232,7 +366,7 @@ export function GraveyardScene() {
                 <p className="text-xs font-black uppercase tracking-[.26em] text-violet-200/70">{loading ? "Summoning..." : `${selected.statusEmoji} ${selected.status}`}</p>
                 <h2 className="truncate text-xl font-black leading-tight sm:text-3xl">{selected.symbol} · {selected.name}</h2>
               </div>
-              <button aria-label="Clear selected ticker" onClick={() => setSelected(null)} className="rounded-full border border-white/10 bg-white/[0.07] px-3 py-2 text-xs font-black text-violet-100/80 transition hover:bg-white/[0.12] hover:text-white">Clear</button>
+              <button aria-label="Clear selected ticker" onClick={clearSelected} className="rounded-full border border-white/10 bg-white/[0.07] px-3 py-2 text-xs font-black text-violet-100/80 transition hover:bg-white/[0.12] hover:text-white">Clear</button>
             </div>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <Metric label="Now" value={formatMoney(selected.currentPrice)} tone="price" />
@@ -255,7 +389,7 @@ export function GraveyardScene() {
           </aside>
         )}
 
-        <a href="#fallen" className={`summon-cta ${selected ? "summon-cta-selected" : ""} absolute left-1/2 z-40 flex h-12 w-[min(320px,82vw)] -translate-x-1/2 items-center justify-center rounded-2xl border border-white/10 bg-white/10 px-4 text-sm font-black shadow-2xl shadow-black/40 backdrop-blur-md transition hover:bg-white/15 sm:h-14 sm:w-[min(390px,68vw)] sm:px-6 sm:text-base ${selected ? "bottom-2 sm:bottom-6" : "bottom-4 sm:bottom-6"}`}>
+        <Link href="/?view=fallen#fallen" onClick={goFallen} className={`summon-cta ${selected ? "summon-cta-selected" : ""} absolute left-1/2 z-40 flex h-12 w-[min(320px,82vw)] -translate-x-1/2 items-center justify-center rounded-2xl border border-white/10 bg-white/10 px-4 text-sm font-black shadow-2xl shadow-black/40 backdrop-blur-md transition hover:bg-white/15 sm:h-14 sm:w-[min(390px,68vw)] sm:px-6 sm:text-base ${selected ? "bottom-2 sm:bottom-6" : "bottom-4 sm:bottom-6"}`}>
           <span className="inline-flex items-center justify-center gap-2 sm:gap-2.5">
             <span className="sm:hidden">Summon More Tickers</span>
             <span className="hidden sm:inline">Summon More Fallen Tickers</span>
@@ -263,9 +397,9 @@ export function GraveyardScene() {
               <path d="M7 10l5 5 5-5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </span>
-        </a>
+        </Link>
 
-        {ticker && loading && <div className="absolute inset-x-0 top-24 z-40 text-center text-sm font-black text-violet-100">Searching {ticker}...</div>}
+        {ticker && loading && <div className="absolute inset-x-0 top-24 z-40 text-center text-sm font-black text-violet-100">Searching {loadingLabel || ticker}...</div>}
       </section>
 
       <section id="fallen" className="fallen-section relative flex min-h-[100svh] scroll-mt-0 flex-col overflow-hidden px-4 py-5 sm:px-8 sm:py-8">
@@ -313,7 +447,7 @@ export function GraveyardScene() {
                 {column.map(([symbol, name, drop], index) => (
                   <button
                     key={symbol}
-                    onClick={() => loadTicker(symbol, true)}
+                    onClick={() => loadTicker(symbol, true, `${symbol} ${name}`)}
                     className="group grid w-full grid-cols-[2.25rem_1fr_auto] items-center gap-3 rounded-3xl px-2.5 py-2 text-left transition hover:bg-white/[0.075] sm:grid-cols-[2.75rem_1fr_auto] sm:px-3 sm:py-2.5"
                   >
                     <span className="grid h-8 w-8 place-items-center rounded-2xl bg-violet-300/10 text-[11px] font-black text-violet-100/55 sm:h-9 sm:w-9">{columnIndex * 10 + index + 1}</span>
@@ -329,7 +463,7 @@ export function GraveyardScene() {
           </div>
 
           <div className="relative z-10 mt-4 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-4 text-sm font-semibold text-violet-100/55 sm:flex-row">
-            <a href="#top" className="rounded-full border border-white/10 bg-white/[0.06] px-5 py-2 font-black text-violet-100 transition hover:bg-white/[0.1]">Back to top ↑</a>
+            <Link href="/#top" onClick={goTop} className="rounded-full border border-white/10 bg-white/[0.06] px-5 py-2 font-black text-violet-100 transition hover:bg-white/[0.1]">Back to top ↑</Link>
             <p>© {new Date().getFullYear()} <a className="font-black text-violet-200 hover:text-white" href="https://github.com/fiammamuscari" target="_blank" rel="noreferrer">Fiamy</a></p>
           </div>
         </div>
